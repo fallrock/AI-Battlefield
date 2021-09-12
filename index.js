@@ -1,7 +1,11 @@
 'use strict';
 
-import { Server } from './server.js';
-import { config } from './config.js';
+const { GameServer } = require('./gameServer.js');
+const { config } = require('./config.js');
+const { FrontendServer } = require('./frontendServer.js');
 
-const server = new Server();
-server.listen(config.port);
+const gameServer = new GameServer();
+gameServer.listen(config.BACKEND_PORT);
+
+const frontendServer = new FrontendServer();
+frontendServer.listen(config.FRONTEND_PORT);

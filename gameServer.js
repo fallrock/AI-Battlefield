@@ -1,8 +1,8 @@
 'use strict';
 
-import { WebSocketServer } from 'ws';
+const { WebSocketServer } = require('ws');
 
-export class Server {
+class GameServer {
 
   listen(port) {
     this.wss = new WebSocketServer({ port: port });
@@ -19,3 +19,5 @@ export class Server {
   }
 
 }
+
+module.exports = { GameServer };
