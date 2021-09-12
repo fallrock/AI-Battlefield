@@ -3,7 +3,8 @@
 import { WebSocketServer } from 'ws';
 
 export class Server {
-  constructor(port) {
+
+  listen(port) {
     this.wss = new WebSocketServer({ port: port });
 
     this.wss.on('connection', (ws) => {
@@ -15,6 +16,6 @@ export class Server {
       ws.send('${message}');
 
     });
-
   }
+
 }
