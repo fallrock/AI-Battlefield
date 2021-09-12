@@ -9,8 +9,12 @@ class FrontendServer {
 
   listen(host, port) {
 
-    this.app.get('*', (req, res) => {
+    ///TODO: full frontend experience
+    this.app.get('/', (req, res) => {
       res.send(fs.readFileSync('index.html', 'utf-8'));
+    });
+    this.app.get('/client.js', (req, res) => {
+      res.send(fs.readFileSync('client.js', 'utf-8'));
     });
 
     this.app.listen(port, host);

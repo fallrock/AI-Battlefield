@@ -11,9 +11,8 @@ class GameServer {
 
       ws.on('message', (message) => {
         console.log(`message: ${message}`);
+        ws.send(`${message}`);
       });
-
-      ws.send('${message}');
 
     });
   }
