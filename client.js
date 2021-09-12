@@ -1,10 +1,20 @@
 ///TODO: host/port
 const socket = new WebSocket('ws://localhost:8081');
 
-socket.addEventListener('open', function (event) {
-    socket.send('Hello Server!');
+socket.addEventListener('message', (event) => {
+    const message = JSON.parse(event.data);
+    switch (message.type) {
+        case 'gamestate':
+            console.log(`gamestate: ${JSON.stringify(message.gamestate)}`);
+            break;
+        default:
+            console.log(`unknown message type ${JSON.stringify(message)}`);
+    }
 });
 
-socket.addEventListener('message', function (event) {
-    console.log(`Message from server ${event.data}`);
-});
+const timer = setInterval(() => {
+    const request = {
+        type: 'gamestate'
+    };
+    socket.send(JSON.stringify(request));
+}, 1000);
