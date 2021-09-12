@@ -1,8 +1,14 @@
 'use strict';
 
 const config = {
-  BACKEND_PORT: process.env.BACKEND_PORT || 8081,
-  FRONTEND_PORT: process.env.FRONTEND_PORT || 8080
+  backend: {
+    host: process.env.BACKEND_HOST || '0.0.0.0',
+    port: process.env.BACKEND_PORT || 8081
+  },
+  frontend: {
+    host: process.env.FRONTEND_HOST || '0.0.0.0',
+    port: process.env.BACKEND_PORT || 8080
+  }
 };
 
 module.exports = { config };

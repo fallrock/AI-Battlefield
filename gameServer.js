@@ -4,8 +4,8 @@ const { WebSocketServer } = require('ws');
 
 class GameServer {
 
-  listen(port) {
-    this.wss = new WebSocketServer({ port: port });
+  listen(host, port) {
+    this.wss = new WebSocketServer({ host, port });
 
     this.wss.on('connection', (ws) => {
 

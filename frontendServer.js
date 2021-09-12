@@ -5,8 +5,8 @@ class FrontendServer {
     this.app = require('express')();
   }
 
-  listen(port) {
-    this.app.listen(port);
+  listen(host, port) {
+    this.app.listen(port, host);
   }
 }
 
