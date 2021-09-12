@@ -1,10 +1,7 @@
 'use strict';
 
 import { Server } from './server.js';
-
-const config = {
-  port: process.env.PORT || 8080
-};
+import { config } from './config.js';
 
 const server = new Server();
 server.listen(config.port);
