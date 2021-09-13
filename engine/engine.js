@@ -22,12 +22,21 @@ module.exports.importState = function(data) {
     gameState = JSON.parse(data);
 }
 
-// Who will validate newLogicFn?
 module.exports.setDroneAI = function(playerId, newLogicFn) {
+    console.log('Setting ai...');
     for (let drone of gameState.drones) {
         if (drone.id == playerId) {
             drone.ai = newLogicFn;
-            break;
+            return;
+        }
+    }
+    console.error(`Player with id <${playerId}> does not exist`);
+}
+
+module.exports.exportDroneAI = function(playerId) {
+    for (let drone of gameState.drones) {
+        if (drone.id == playerId) {
+            return drone.ai.toString();
         }
     }
 }
@@ -38,9 +47,10 @@ module.exports.createDrone = function() {
         x: Math.floor(Math.random() * gameState.map.w),
         y: Math.floor(Math.random() * gameState.map.h),
     };
+    ///TODO: proper id generation
     d.id = (''+Math.random()).slice(2) + (''+Math.random()).slice(2);
     d.input = {
-        enginePower: 1,
+        enginePower: 0,
         rotation: 0,
     };
     d.ai = () => {};
@@ -51,6 +61,7 @@ module.exports.createDrone = function() {
 function _applyAI() {
     for (let drone of gameState.drones) {
         let inp = drone.ai(drone, gameState);
+        if (!inp) { continue; }
         if (inp.rotation >= 360) { inp.rotation -= 360; }
         if (inp.rotation < 0) { inp.rotation += 360; }
         inp.enginePower = Math.max(0, Math.min(1, inp.enginePower));
