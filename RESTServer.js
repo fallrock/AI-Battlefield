@@ -5,31 +5,37 @@ class RESTServer {
     const express = require('express');
     this.app = express();
 
-    const jsonParser = express.json();
+    this.app.use(express.json());
 
-    ///TODO: validation
+    const logger = (req, res, next) => {
+      // console.log(req);
+      next();
+    };
+    this.app.use(logger);
+
+    ///TODO: validate tokens and stuff
 
     // create drone
-    this.app.post('/drone', jsonParser, (req, res) => {
+    this.app.post('/drone', (req, res) => {
       ///TODO: create the drone
-      const token = 'SECRET TOKEN';
-      const id = 'NOT SECRET TOKEN'
+      const token = 'GENERATED SECRET TOKEN';
+      const id = 'GENERATED PUBLIC ID';
       res.status(201).send({ id, token });
     });
 
     // update AI
-    this.app.patch('/drone', jsonParser, (req, res) => {
-      const data = res.body;
-      const token = data.token;
-      const ai = data.ai;
-      ///TODO: update ai
+    this.app.patch('/drone/:id', (req, res) => {
+      const token = req.body.token;
+      const id = req.params.id;
+      const ai = req.body.ai;
+      ///TODO: update AI
       res.status(200).send({ id, ai });
     });
 
     // get current AI
-    this.app.get('/drone', jsonParser (req, res) => {
-      const data = res.body;
-      const token = data.token;
+    this.app.get('/drone/:id', (req, res) => {
+      const token = req.body.token;
+      const id = req.params.id;
       ///TODO: get the AI
       const ai = 'while (true) {}';
       res.status(200).send({ id, ai });
@@ -40,3 +46,5 @@ class RESTServer {
     this.app.listen(config.port, config.host);
   }
 }
+
+module.exports = { RESTServer };

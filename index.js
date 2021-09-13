@@ -7,5 +7,5 @@ const { RESTServer } = require('./RESTServer.js');
 const gameServer = new GameServer();
 gameServer.listen(config.gameServer);
 
-const restServer = new RestServer();
+const restServer = new RESTServer();
 restServer.listen(config.RESTServer);
