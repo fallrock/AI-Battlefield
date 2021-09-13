@@ -1,6 +1,8 @@
 'use strict';
 
 class RESTServer {
+  app = null;
+
   constructor() {
     const express = require('express');
     this.app = express();
