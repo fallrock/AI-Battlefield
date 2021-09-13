@@ -2,6 +2,10 @@
 
 const { config } = require('./config.js');
 const { GameServer } = require('./gameServer.js');
+const { RESTServer } = require('./RESTServer.js');
 
 const gameServer = new GameServer();
-gameServer.listen(config.host, config.port);
+gameServer.listen(config.gameServer);
+
+const restServer = new RESTServer();
+restServer.listen(config.RESTServer);
