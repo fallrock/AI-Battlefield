@@ -5,7 +5,17 @@ const { WebSocketServer } = require('ws');
 class GameServer {
 
   constructor() {
-    ///TODO:
+    this.handlers = {};
+
+    this.handlers['gamestate'] = (ws, request) => {
+      const response = {
+        type: 'gamestate',
+        gamestate: this.engine.gameState
+      };
+      ws.send(JSON.stringify(response));
+    };
+
+    ///TODO: game engine integration
     this.engine = {
       gameState: {
         drones: [
@@ -18,6 +28,15 @@ class GameServer {
         ]
       }
     };
+
+  }
+
+  handleMessage(ws, request) {
+    if (this.handlers[request.type]) {
+      this.handlers[request.type](ws, request);
+    } else {
+      console.log(`unknown request type: ${request}`);
+    }
   }
 
   listen(host, port) {
@@ -25,24 +44,9 @@ class GameServer {
 
     this.wss.on('connection', (ws) => {
 
-      ///TODO:
-      // proper packet creating
-      // messageHandler[message.type](message.body)
       ws.on('message', (message) => {
         const request = JSON.parse(message);
-
-        switch (request.type) {
-          case 'gamestate':
-            ws.send(JSON.stringify(
-              {
-                type: 'gamestate',
-                gamestate: this.engine.gameState
-              }
-            ));
-            break;
-          default:
-            console.log(`unknown message type ${request}`);
-        }
+        this.handleMessage(ws, request);
       });
 
     });
