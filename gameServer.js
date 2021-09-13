@@ -2,7 +2,7 @@
 
 const { WebSocketServer } = require('ws');
 
-class APIServer {
+class GameServer {
 
   constructor() {
     this.handlers = {};
@@ -54,4 +54,4 @@ class APIServer {
 
 }
 
-module.exports = { APIServer };
+module.exports = { GameServer };

@@ -1,7 +1,7 @@
 'use strict';
 
 const { config } = require('./config.js');
-const { APIServer } = require('./APIServer.js');
+const { GameServer } = require('./gameServer.js');
 
-const api = new APIServer();
-api.listen(config.host, config.port);
+const gameServer = new GameServer();
+gameServer.listen(config.host, config.port);
