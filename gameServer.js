@@ -3,9 +3,9 @@
 const { WebSocketServer } = require('ws');
 
 class GameServer {
+  #handlers = {};
 
   constructor() {
-    this.handlers = {};
 
     this.handlers['gamestate'] = (ws, request) => {
       const response = {
@@ -31,7 +31,7 @@ class GameServer {
 
   }
 
-  handleMessage(ws, request) {
+  #handleMessage(ws, request) {
     if (this.handlers[request.type]) {
       this.handlers[request.type](ws, request);
     } else {
