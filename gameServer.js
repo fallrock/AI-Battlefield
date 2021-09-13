@@ -39,8 +39,8 @@ class GameServer {
     }
   }
 
-  listen(host, port) {
-    this.wss = new WebSocketServer({ host, port });
+  listen(config) {
+    this.wss = new WebSocketServer(config);
 
     this.wss.on('connection', (ws) => {
 
