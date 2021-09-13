@@ -5,7 +5,7 @@ const config = {
     host: process.env.GAMESERVER_HOST || '0.0.0.0',
     port: process.env.GAMESERVER_PORT || 8081
   },
-  REST: {
+  RESTServer: {
     host: process.env.REST_HOST || '0.0.0.0',
     port: process.env.REST_PORT || 8082
   }
