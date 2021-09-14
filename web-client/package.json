@@ -1,7 +1,7 @@
 {
-  "name": "ai-battlefield",
+  "name": "webclient",
   "version": "1.0.0",
-  "description": "sponsored by gym1505",
+  "description": "",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
@@ -11,13 +11,12 @@
     "url": "git+https://github.com/fallrock/AI-Battlefield.git"
   },
   "author": "",
-  "license": "",
+  "license": "ISC",
   "bugs": {
     "url": "https://github.com/fallrock/AI-Battlefield/issues"
   },
   "homepage": "https://github.com/fallrock/AI-Battlefield#readme",
   "dependencies": {
-    "express": "^4.17.1",
-    "ws": "^8.2.2"
+    "express": "^4.17.1"
   }
 }
