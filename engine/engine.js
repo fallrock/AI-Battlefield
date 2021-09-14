@@ -1,5 +1,7 @@
 'use strict';
 
+const gen = require('./gen.js');
+
 let gameState = {
     drones: [],
     map: {
@@ -43,12 +45,8 @@ module.exports.exportDroneAI = function(playerId) {
 
 module.exports.createDrone = function() {
     let drone = {};
-    drone.pos = {
-        x: Math.floor(Math.random() * gameState.map.w),
-        y: Math.floor(Math.random() * gameState.map.h),
-    };
-    ///TODO: proper id generation
-    drone.id = (''+Math.random()).slice(2) + (''+Math.random()).slice(2);
+    drone.pos = gen.spawnPoint(gameState);
+    drone.id = gen.id();
     drone.input = {
         enginePower: 0,
         rotation: 0,
