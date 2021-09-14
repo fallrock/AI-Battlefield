@@ -2,8 +2,11 @@
 
 class RESTServer {
   app = null;
+  engine = null;
 
-  constructor() {
+  constructor(engineRef) {
+    this.engine = engineRef;
+
     const express = require('express');
     this.app = express();
 
@@ -19,27 +22,27 @@ class RESTServer {
 
     // create drone
     this.app.post('/drone', (req, res) => {
-      ///TODO: create the drone
+      const id = this.engine.createDrone();
       const token = 'GENERATED SECRET TOKEN';
-      const id = 'GENERATED PUBLIC ID';
       res.status(201).send({ id, token });
     });
 
     // update AI
     this.app.patch('/drone/:id', (req, res) => {
-      const token = req.body.token;
       const id = req.params.id;
+      const token = req.body.token;
       const ai = req.body.ai;
-      ///TODO: update AI
-      res.status(200).send({ id, ai });
+      ///TODO: check token
+      ///TODO: validate ai
+      this.engine.setDroneAI(id, new Function(ai));
+      res.status(200).send({});
     });
 
     // get current AI
     this.app.get('/drone/:id', (req, res) => {
       const token = req.body.token;
       const id = req.params.id;
-      ///TODO: get the AI
-      const ai = 'while (true) {}';
+      const ai = this.engine.exportDroneAI(id);
       res.status(200).send({ id, ai });
     });
   }

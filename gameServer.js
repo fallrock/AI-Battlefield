@@ -4,8 +4,9 @@ const { WebSocketServer } = require('ws');
 
 class GameServer {
   handlers = {};
+  engine = null;
 
-  constructor() {
+  constructor(engineRef) {
 
     this.handlers['gamestate'] = (ws, request) => {
       const response = {
@@ -15,19 +16,7 @@ class GameServer {
       ws.send(JSON.stringify(response));
     };
 
-    ///TODO: game engine integration
-    this.engine = {
-      gameState: {
-        drones: [
-          {
-            pos: { x: 0, y: 1, z: 2 }
-          },
-          {
-            pos: { x: 3, y: 4, z: 5 }
-          }
-        ]
-      }
-    };
+    this.engine = engineRef;
 
   }
 
