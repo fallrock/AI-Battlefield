@@ -17,7 +17,7 @@ module.exports.onTick = function() {
 }
 
 module.exports.exportState = function() {
-    return JSON.stringify(gameState, null, 2);
+    return JSON.stringify(gameState);
 }
 
 module.exports.importState = function(data) {
