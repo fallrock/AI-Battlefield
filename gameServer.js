@@ -4,6 +4,7 @@ const { WebSocketServer } = require('ws');
 
 class GameServer {
   handlers = {};
+  engine = null;
 
   constructor(engineRef) {
 
