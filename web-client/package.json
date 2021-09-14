@@ -1,5 +1,5 @@
 {
-  "name": "ai-battlefield-webclient",
+  "name": "webclient",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fallrock/AI-Battlefield-webclient.git"
+    "url": "git+https://github.com/fallrock/AI-Battlefield.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/fallrock/AI-Battlefield-webclient/issues"
+    "url": "https://github.com/fallrock/AI-Battlefield/issues"
   },
-  "homepage": "https://github.com/fallrock/AI-Battlefield-webclient#readme",
+  "homepage": "https://github.com/fallrock/AI-Battlefield#readme",
   "dependencies": {
     "express": "^4.17.1"
   }
