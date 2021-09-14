@@ -58,6 +58,7 @@ module.exports.createDrone = function() {
 
 function _applyAI() {
     for (let drone of gameState.drones) {
+        ///TODO: try/catch, proper input validation
         let inp = drone.ai(drone, gameState);
         if (!inp) { continue; }
         if (inp.rotation >= 360) { inp.rotation -= 360; }
