@@ -42,20 +42,20 @@ module.exports.exportDroneAI = function(playerId) {
 }
 
 module.exports.createDrone = function() {
-    let d = {};
-    d.pos = {
+    let drone = {};
+    drone.pos = {
         x: Math.floor(Math.random() * gameState.map.w),
         y: Math.floor(Math.random() * gameState.map.h),
     };
     ///TODO: proper id generation
-    d.id = (''+Math.random()).slice(2) + (''+Math.random()).slice(2);
-    d.input = {
+    drone.id = (''+Math.random()).slice(2) + (''+Math.random()).slice(2);
+    drone.input = {
         enginePower: 0,
         rotation: 0,
     };
-    d.ai = () => {};
-    gameState.drones.push(d);
-    return d.id;
+    drone.ai = () => {};
+    gameState.drones.push(drone);
+    return drone.id;
 }
 
 function _applyAI() {
