@@ -5,6 +5,7 @@ const config = {
 
 class Application {
     renderer = null;
+    socket = null;
     gamestate = {};
 
     constructor(renderer) {
