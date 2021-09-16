@@ -8,30 +8,24 @@ import term
 // }
 
 fn usage() {
-	g := fn(s string) string {
-		return term.green(s)
-	}
-	y := fn(s string) string {
-		return term.yellow(s)
-	}
-	b := fn(s string) string {
-		return term.blue(s)
-	}
+	g := term.green
+	y := term.yellow
+	b := term.blue
 
-	eprintln(y('USAGE:'))
-	eprintln('    ${os.args[0]} OPTIONS')
-	eprintln('')
+	println(y('USAGE:'))
+	println('    ${os.args[0]} OPTIONS')
+	println('')
 
-	eprintln(y('OPTIONS:'))
-	eprintln('    ${g('-u')}, ${g('--userid')} ${b('<id>')}        User ID')
-	eprintln('    ${g('-f')}, ${g('--file')} ${b('<filename>')}    Path to file with ai program')
-	eprintln('    ${g('-h')}, ${g('--help')}               Show this help')
-	eprintln('')
+	println(y('OPTIONS:'))
+	println('    ${g('-u')}, ${g('--userid')} ${b('<id>')}        User ID')
+	println('    ${g('-f')}, ${g('--file')} ${b('<filename>')}    Path to file with ai program')
+	println('    ${g('-h')}, ${g('--help')}               Show this help')
+	println('')
 
-	eprintln(y('EXAMPLES:'))
-	eprintln('    ${os.args[0]} ${g('--userid')} ${b('1234')} ${g('--file')} ${b('my_ai.js')}')
-	eprintln('    ${os.args[0]} ${g('-u')} ${b('1234')} ${g('-f')} ${b('my_ai.js')}')
-	eprintln('')
+	println(y('EXAMPLES:'))
+	println('    ${os.args[0]} ${g('--userid')} ${b('1234')} ${g('--file')} ${b('my_ai.js')}')
+	println('    ${os.args[0]} ${g('-u')} ${b('1234')} ${g('-f')} ${b('my_ai.js')}')
+	println('')
 }
 
 fn arg(param ...string) ?string {
