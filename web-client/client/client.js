@@ -29,6 +29,10 @@ class Application {
     onGameStateUpdate(gamestate) {
         this.gamestate = gamestate;
         this.render();
+        let mapDims = {w: gamestate.map.width, h: gamestate.map.height};
+        onMapChanged(mapDims);
+        loop();
+        console.log(gamestate.drones);
     }
 
     render() {
@@ -55,35 +59,46 @@ class Renderer {
         gamestate = gamestate_local;
     }
 }
-///TODO: resize canvas
 function setup() {
-    createCanvas(window.innerWidth, window.innerHeight);
+    createCanvas(100, 100);
+    onWindowResized();
+    // frameRate(2);
+    noLoop();
 }
 function draw() {
-    if (!gamestate) return;
+    if (!gamestate) return; ///TODO fix
     background(0);
 
-    const mapScale = 50;
-    const width = gamestate.map.width;
-    const height = gamestate.map.height;
+    const width = sizes.map.w;
+    const height = sizes.map.h;
     fill(200, 200, 200);
-    rect(0, 0, width * mapScale, height * mapScale);
+    rect(0, 0, sizes.canvas.w, sizes.canvas.h);
 
     fill(58, 42, 161);
 
     gamestate.drones.forEach((drone) => {
-        const r = 1;
-        const { x, y } = drone.pos;
-        strokeWeight(0);
-        circle((x + r / 2) * mapScale, (height - (y + r / 2)) * mapScale, r * mapScale);
-        strokeWeight(1);
+        const scale = sizes.scale;
+        const r = sizes.droneR;
+
+        const x = drone.pos.x * scale;
+        const y = drone.pos.y * scale;
 
         const radians = (360 - drone.input.rotation + 90) * Math.PI / 180;
-        const x1 = x + (r / 2) * Math.cos(radians);
-        const y1 = y + (r / 2) * Math.sin(radians);
-        line((x + r / 2) * mapScale, (height - (y + r / 2)) * mapScale, (x1 + r / 2) * mapScale, (height - (y1 + r / 2)) * mapScale);
+        const x1 = x + r/2 * Math.cos(radians);
+        const y1 = y + r/2 * Math.sin(radians);
+
+        strokeWeight(0);
+        circle(x, sizes.canvas.h - y, sizes.droneR);
+
+        strokeWeight(sizes.strokeW);
+        line(x, sizes.canvas.h - y, x1, sizes.canvas.h - y1);
     });
 }
+
+function windowResized() {
+    onWindowResized();
+}
+
 /* temp */
 
 const app = new Application(new Renderer(gamestate));
