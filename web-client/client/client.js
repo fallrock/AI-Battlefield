@@ -64,24 +64,42 @@ function draw() {
     background(0);
 
     const mapScale = 50;
-    const width = gamestate.map.width;
-    const height = gamestate.map.height;
-    fill(200, 200, 200);
-    rect(0, 0, width * mapScale, height * mapScale);
+    const mw = gamestate.map.width;
+    const mh = gamestate.map.height;
+    const mapOffset = { x: 100, y: 100 };
 
-    fill(58, 42, 161);
+    const w2ss = (scalar) => {
+        return scalar * mapScale;
+    };
+    const w2sx = (x) => {
+        return mapOffset.x + w2ss(x);
+    };
+    const w2sy = (y) => {
+        return height - mapOffset.y - w2ss(y);
+    };
+    const w2s = (pos) => {
+        return { x: w2sx(pos.x), y: w2sy(pos.y) };
+    };
+
+    fill(200, 200, 200);
+    // dumb interface -> 0 + mh bullshit
+    rect(w2sx(0), w2sy(0 + mh), w2ss(mw), w2ss(mh));
 
     gamestate.drones.forEach((drone) => {
-        const r = 1;
+        const r = 0.5;   // in-world size
         const { x, y } = drone.pos;
+
+        fill(58, 42, 161);
         strokeWeight(0);
-        circle((x + r / 2) * mapScale, (height - (y + r / 2)) * mapScale, r * mapScale);
-        strokeWeight(1);
+        circle(w2sx(x), w2sy(y), w2ss(2 * r));
 
         const radians = (360 - drone.input.rotation + 90) * Math.PI / 180;
-        const x1 = x + (r / 2) * Math.cos(radians);
-        const y1 = y + (r / 2) * Math.sin(radians);
-        line((x + r / 2) * mapScale, (height - (y + r / 2)) * mapScale, (x1 + r / 2) * mapScale, (height - (y1 + r / 2)) * mapScale);
+        const x1 = x + r * Math.cos(radians);
+        const y1 = y + r * Math.sin(radians);
+
+        stroke(255, 255, 255);
+        strokeWeight(1);
+        line(w2sx(x), w2sy(y), w2sx(x1), w2sy(y1));
     });
 }
 /* temp */
