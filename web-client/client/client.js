@@ -89,7 +89,7 @@ function draw() {
         const p = [drone.pos.x, drone.pos.y];
         const c = color(15, 3, 252);
 
-        const radians = (360 - drone.input.rotation + 90) * Math.PI / 180;
+        const radians = drone.input.rotation * Math.PI / 180;
         const p1 = [
             p[0] + r * Math.cos(radians),
             p[1] + r * Math.sin(radians),
