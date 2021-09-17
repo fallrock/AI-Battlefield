@@ -4,16 +4,16 @@ let sizes = {
     canvas: {w: null, h: null},
     map: {w: null, h: null},
     scale: null,
-    strokeW: 1,
-    strokeW_bold: 1,
-    droneR: null,
+    strokeW: null,
+    strokeW_bold: null,
+    canvasRef: null,
 };
 
 function onWindowResized() {
     let size = Math.min(windowWidth, windowHeight);
     size *= 0.95;
     resizeCanvas(size + 1, size + 1);
-    // centerCanvas();
+    centerCanvas();
     recalcSizes({w: size, h: size}, sizes.map);
 }
 
@@ -24,7 +24,7 @@ function onMapChanged(mapDims) {
 function centerCanvas() {
     var x = (windowWidth - width) / 2;
     var y = (windowHeight - height) / 2;
-    canvas.position(x, y);
+    sizes.canvasRef.position(x, y);
 }
 
 function recalcSizes(canvas, map) {
@@ -40,7 +40,6 @@ function recalcSizes(canvas, map) {
     sizes.canvas.h = sizes.map.h * sizes.scale;
     sizes.strokeW = Math.max(1, sizes.scale / 50);
     sizes.strokeW_bold = Math.max(1, sizes.scale / 25);
-    sizes.droneR = Math.max(sizes.scale - 2, sizes.scale * 0.8);
 }
 
 // module.exports = {

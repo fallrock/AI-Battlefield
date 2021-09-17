@@ -32,7 +32,7 @@ class Application {
         let mapDims = {w: gamestate.map.width, h: gamestate.map.height};
         onMapChanged(mapDims);
         loop();
-        console.log(gamestate.drones);
+        // console.log(gamestate.drones);
     }
 
     render() {
@@ -60,38 +60,46 @@ class Renderer {
     }
 }
 function setup() {
-    createCanvas(100, 100);
+    c = createCanvas(100, 100);
+    sizes.canvasRef = c;
     onWindowResized();
-    // frameRate(2);
+    // frameRate(0.1);
     noLoop();
 }
 function draw() {
-    if (!gamestate) return; ///TODO fix
+    if (!gamestate) return;
     background(0);
 
-    const width = sizes.map.w;
-    const height = sizes.map.h;
-    fill(200, 200, 200);
-    rect(0, 0, sizes.canvas.w, sizes.canvas.h);
+    // world to screen utilities
+    const w2ss = (scalar) => {
+        return scalar * sizes.scale;
+    };
+    const w2sp = (pos) => {
+        return [
+            w2ss(pos[0]),
+            sizes.canvas.h - w2ss(pos[1])
+        ];
+    };
 
-    fill(58, 42, 161);
+    strokeWeight(0);
 
     gamestate.drones.forEach((drone) => {
         const scale = sizes.scale;
-        const r = sizes.droneR;
-
-        const x = drone.pos.x * scale;
-        const y = drone.pos.y * scale;
+        const r = 0.5;   // in-world size
+        const p = [drone.pos.x, drone.pos.y];
+        const c = color(15, 3, 252);
 
         const radians = (360 - drone.input.rotation + 90) * Math.PI / 180;
-        const x1 = x + r/2 * Math.cos(radians);
-        const y1 = y + r/2 * Math.sin(radians);
+        const p1 = [
+            p[0] + r * Math.cos(radians),
+            p[1] + r * Math.sin(radians),
+        ];
 
-        strokeWeight(0);
-        circle(x, sizes.canvas.h - y, sizes.droneR);
-
+        noFill();
+        stroke(c);
         strokeWeight(sizes.strokeW);
-        line(x, sizes.canvas.h - y, x1, sizes.canvas.h - y1);
+        circle(...w2sp(p), w2ss(r*2));
+        line(...w2sp(p), ...w2sp(p1));
     });
 }
 
