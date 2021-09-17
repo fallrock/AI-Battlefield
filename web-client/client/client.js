@@ -61,13 +61,14 @@ function setup() {
 }
 function draw() {
     if (!gamestate) return;
-    background(0);
+    background(255);
 
     const mapScale = 50;
     const mw = gamestate.map.width;
     const mh = gamestate.map.height;
     const mapOffset = { x: 100, y: 100 };
 
+    // world to screen utilities
     const w2ss = (scalar) => {
         return scalar * mapScale;
     };
@@ -81,7 +82,8 @@ function draw() {
         return { x: w2sx(pos.x), y: w2sy(pos.y) };
     };
 
-    fill(200, 200, 200);
+    strokeWeight(0);
+    fill(0, 0, 0);
     // dumb interface -> 0 + mh bullshit
     rect(w2sx(0), w2sy(0 + mh), w2ss(mw), w2ss(mh));
 
@@ -89,16 +91,20 @@ function draw() {
         const r = 0.5;   // in-world size
         const { x, y } = drone.pos;
 
-        fill(58, 42, 161);
-        strokeWeight(0);
+        const c = color(15, 3, 252);
+        const strokeW = 3;
+
+        fill(0, 0, 0, 0);
+        stroke(c);
+        strokeWeight(strokeW);
         circle(w2sx(x), w2sy(y), w2ss(2 * r));
 
         const radians = (360 - drone.input.rotation + 90) * Math.PI / 180;
         const x1 = x + r * Math.cos(radians);
         const y1 = y + r * Math.sin(radians);
 
-        stroke(255, 255, 255);
-        strokeWeight(1);
+        stroke(c);
+        strokeWeight(strokeW);
         line(w2sx(x), w2sy(y), w2sx(x1), w2sy(y1));
     });
 }
