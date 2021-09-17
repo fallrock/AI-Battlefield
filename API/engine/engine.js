@@ -48,6 +48,7 @@ module.exports.createDrone = function() {
     drone.pos = gen.spawnPoint(gameState);
     drone.id = gen.id();
     drone.input = {
+        enabled: false,
         enginePower: 0,
         rotation: 0,
     };
@@ -70,6 +71,7 @@ function _applyAI() {
 
 function _processWorld() {
     for (let drone of gameState.drones) {
+        if (!drone.input.enabled) { continue; }
         const radians = drone.input.rotation * Math.PI / 180;
         const fwd = [
             Math.cos(radians),
