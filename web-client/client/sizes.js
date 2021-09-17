@@ -13,21 +13,21 @@ function onWindowResized() {
     let size = Math.min(windowWidth, windowHeight);
     size *= 0.95;
     resizeCanvas(size + 1, size + 1);
-    centerCanvas();
+    _centerCanvas();
     recalcSizes({w: size, h: size}, sizes.map);
 }
 
 function onMapChanged(mapDims) {
-    recalcSizes(sizes.canvas, mapDims);
+    _recalcSizes(sizes.canvas, mapDims);
 }
 
-function centerCanvas() {
-    var x = (windowWidth - width) / 2;
-    var y = (windowHeight - height) / 2;
+function _centerCanvas() {
+    let x = (windowWidth - width) / 2;
+    let y = (windowHeight - height) / 2;
     sizes.canvasRef.position(x, y);
 }
 
-function recalcSizes(canvas, map) {
+function _recalcSizes(canvas, map) {
     if (map.w == null) {
         sizes.canvas = canvas;
         return;
@@ -41,9 +41,3 @@ function recalcSizes(canvas, map) {
     sizes.strokeW = Math.max(1, sizes.scale / 50);
     sizes.strokeW_bold = Math.max(1, sizes.scale / 25);
 }
-
-// module.exports = {
-//     sizes,
-//     onWindowResized,
-//     onMapChanged,
-// }

@@ -29,7 +29,7 @@ class Application {
     onGameStateUpdate(gamestate) {
         this.gamestate = gamestate;
         this.render();
-        let mapDims = {w: gamestate.map.width, h: gamestate.map.height};
+        const mapDims = {w: gamestate.map.width, h: gamestate.map.height};
         onMapChanged(mapDims);
         loop();
         // console.log(gamestate.drones);
