@@ -14,4 +14,4 @@ restServer.listen(config.RESTServer);
 
 setInterval(() => {
     engine.onTick();
-}, 5000);
+}, 1000);
