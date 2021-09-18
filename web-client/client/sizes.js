@@ -11,7 +11,7 @@ let sizes = {
 
 function onWindowResized() {
     let size = Math.min(windowWidth, windowHeight);
-    size *= 0.95;
+    size *= 0.95;  ///TODO: solve via css
     resizeCanvas(size + 1, size + 1);
     _centerCanvas();
     _recalcSizes({w: size, h: size}, sizes.map);
