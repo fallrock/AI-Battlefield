@@ -14,7 +14,7 @@ function onWindowResized() {
     size *= 0.95;
     resizeCanvas(size + 1, size + 1);
     _centerCanvas();
-    recalcSizes({w: size, h: size}, sizes.map);
+    _recalcSizes({w: size, h: size}, sizes.map);
 }
 
 function onMapChanged(mapDims) {
