@@ -31,7 +31,6 @@ class Application {
         this.render();
         const mapDims = {w: gamestate.map.width, h: gamestate.map.height};
         onMapChanged(mapDims);
-        loop();
         // console.log(gamestate.drones);
     }
 
@@ -64,7 +63,6 @@ function setup() {
     sizes.canvasRef = c;
     onWindowResized();
     // frameRate(0.1);
-    noLoop();
 }
 function draw() {
     if (!gamestate) return;
