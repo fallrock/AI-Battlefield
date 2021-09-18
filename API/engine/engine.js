@@ -5,8 +5,8 @@ const gen = require('./gen.js');
 let gameState = {
     drones: [],
     map: {
-        width: 10,
-        height: 10,
+        w: 10,
+        h: 10,
     },
 };
 module.exports.gameState = gameState;
@@ -82,7 +82,7 @@ function _processWorld() {
         drone.pos.y += vel[1];
         if (drone.pos.x < 0) { drone.pos.x = 0; }
         if (drone.pos.y < 0) { drone.pos.y = 0; }
-        if (drone.pos.x >= gameState.map.width) { drone.pos.x = gameState.map.width; }
-        if (drone.pos.y >= gameState.map.height) { drone.pos.y = gameState.map.height; }
+        if (drone.pos.x >= gameState.map.w) { drone.pos.x = gameState.map.w; }
+        if (drone.pos.y >= gameState.map.h) { drone.pos.y = gameState.map.h; }
     }
 }

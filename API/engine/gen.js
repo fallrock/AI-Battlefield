@@ -7,8 +7,8 @@ module.exports = {
 
     spawnPoint: function(gameState) {
         return {
-            x: Math.floor(Math.random() * gameState.map.width),
-            y: Math.floor(Math.random() * gameState.map.height),
+            x: Math.floor(Math.random() * gameState.map.w),
+            y: Math.floor(Math.random() * gameState.map.h),
         };
     },
 
