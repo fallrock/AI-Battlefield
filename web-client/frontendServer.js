@@ -16,6 +16,9 @@ class FrontendServer {
     this.app.get('/client.js', (req, res) => {
       res.send(fs.readFileSync('client/client.js', 'utf-8'));
     });
+    this.app.get('/sizes.js', (req, res) => {
+      res.send(fs.readFileSync('client/sizes.js', 'utf-8'));
+    });
 
     this.app.listen(port, host);
 

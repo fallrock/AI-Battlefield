@@ -48,6 +48,7 @@ module.exports.createDrone = function() {
     drone.pos = gen.spawnPoint(gameState);
     drone.id = gen.id();
     drone.input = {
+        enabled: false,
         enginePower: 0,
         rotation: 0,
     };
@@ -70,24 +71,15 @@ function _applyAI() {
 
 function _processWorld() {
     for (let drone of gameState.drones) {
-        switch (drone.input.rotation) {
-            case 0: {
-                drone.pos.y += drone.input.enginePower;
-                break;
-            }
-            case 90: {
-                drone.pos.x += drone.input.enginePower;
-                break;
-            }
-            case 180: {
-                drone.pos.y -= drone.input.enginePower;
-                break;
-            }
-            case 270: {
-                drone.pos.x -= drone.input.enginePower;
-                break;
-            }
-        }
+        if (!drone.input.enabled) { continue; }
+        const radians = drone.input.rotation * Math.PI / 180;
+        const fwd = [
+            Math.cos(radians),
+            Math.sin(radians),
+        ];
+        const vel = fwd.map(e => e * drone.input.enginePower);
+        drone.pos.x += vel[0];
+        drone.pos.y += vel[1];
         if (drone.pos.x < 0) { drone.pos.x = 0; }
         if (drone.pos.y < 0) { drone.pos.y = 0; }
         if (drone.pos.x >= gameState.map.width) { drone.pos.x = gameState.map.width; }

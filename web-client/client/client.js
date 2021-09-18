@@ -1,7 +1,9 @@
+'use strict';
+
 const config = {
     host: 'localhost',
     port: '8081'
-}
+};
 
 class Application {
     renderer = null;
@@ -29,6 +31,9 @@ class Application {
     onGameStateUpdate(gamestate) {
         this.gamestate = gamestate;
         this.render();
+        const mapDims = {w: gamestate.map.width, h: gamestate.map.height};
+        onMapChanged(mapDims);
+        // console.log(gamestate.drones);
     }
 
     render() {
@@ -55,59 +60,53 @@ class Renderer {
         gamestate = gamestate_local;
     }
 }
-///TODO: resize canvas
 function setup() {
-    createCanvas(window.innerWidth, window.innerHeight);
+    const c = createCanvas(100, 100);
+    sizes.canvasRef = c;
+    onWindowResized();
+    // frameRate(0.1);
 }
 function draw() {
     if (!gamestate) return;
-    background(255);
-
-    const mapScale = 50;
-    const mw = gamestate.map.width;
-    const mh = gamestate.map.height;
-    const mapOffset = { x: 100, y: 100 };
+    background(0);
 
     // world to screen utilities
     const w2ss = (scalar) => {
-        return scalar * mapScale;
+        return scalar * sizes.scale;
     };
-    const w2sx = (x) => {
-        return mapOffset.x + w2ss(x);
-    };
-    const w2sy = (y) => {
-        return height - mapOffset.y - w2ss(y);
-    };
-    const w2s = (pos) => {
-        return { x: w2sx(pos.x), y: w2sy(pos.y) };
+    const w2sp = (pos) => {
+        return [
+            w2ss(pos[0]),
+            sizes.canvas.h - w2ss(pos[1])
+        ];
     };
 
     strokeWeight(0);
-    fill(0, 0, 0);
-    // dumb interface -> 0 + mh bullshit
-    rect(w2sx(0), w2sy(0 + mh), w2ss(mw), w2ss(mh));
 
     gamestate.drones.forEach((drone) => {
+        const scale = sizes.scale;
         const r = 0.5;   // in-world size
-        const { x, y } = drone.pos;
-
+        const p = [drone.pos.x, drone.pos.y];
         const c = color(15, 3, 252);
-        const strokeW = 3;
 
-        fill(0, 0, 0, 0);
+        const radians = drone.input.rotation * Math.PI / 180;
+        const p1 = [
+            p[0] + r * Math.cos(radians),
+            p[1] + r * Math.sin(radians),
+        ];
+
+        noFill();
         stroke(c);
-        strokeWeight(strokeW);
-        circle(w2sx(x), w2sy(y), w2ss(2 * r));
-
-        const radians = (360 - drone.input.rotation + 90) * Math.PI / 180;
-        const x1 = x + r * Math.cos(radians);
-        const y1 = y + r * Math.sin(radians);
-
-        stroke(c);
-        strokeWeight(strokeW);
-        line(w2sx(x), w2sy(y), w2sx(x1), w2sy(y1));
+        strokeWeight(sizes.strokeW);
+        circle(...w2sp(p), w2ss(r*2));
+        line(...w2sp(p), ...w2sp(p1));
     });
 }
+
+function windowResized() {
+    onWindowResized();
+}
+
 /* temp */
 
 const app = new Application(new Renderer(gamestate));
