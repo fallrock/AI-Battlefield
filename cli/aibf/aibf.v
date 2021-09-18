@@ -16,6 +16,7 @@ pub:
 	ai    string [required]
 }
 
+// TODO unhardcode
 const url = 'http://localhost:8082/drone'
 
 pub fn create_drone() ?User {
