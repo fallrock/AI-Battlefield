@@ -23,7 +23,7 @@ class Application {
                     this.onGameStateUpdate(message.gamestate);
                     break;
                 default:
-                    console.log(`unknown message type ${JSON.stringify(message)}`);
+                    console.error(`unknown message type ${JSON.stringify(message)}`);
             }
         });
     }
