@@ -1,7 +1,9 @@
+'use strict';
+
 const config = {
     host: 'localhost',
     port: '8081'
-}
+};
 
 class Application {
     renderer = null;
@@ -59,7 +61,7 @@ class Renderer {
     }
 }
 function setup() {
-    c = createCanvas(100, 100);
+    const c = createCanvas(100, 100);
     sizes.canvasRef = c;
     onWindowResized();
     // frameRate(0.1);
