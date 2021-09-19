@@ -5,6 +5,7 @@ const { WebSocket, WebSocketServer } = require('ws');
 class GameServer {
   handlers = {};
   engine = null;
+  tickTimer = null;
 
   constructor(engineRef) {
 
@@ -40,7 +41,7 @@ class GameServer {
 
     });
 
-    const timer = setInterval(() => {
+    this.tickTimer = setInterval(() => {
       this.engine.onTick();
       this._broadcastGameState();
     }, 1000 / this.engine.gameState.tps);
