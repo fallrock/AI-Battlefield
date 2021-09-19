@@ -166,7 +166,3 @@ class View {
 
 const app = new Application(new View('p5canvas'));
 app.connect(config.host, config.port);
-
-const timer = setInterval(() => {
-    app.requestGameState();
-}, 1000);
