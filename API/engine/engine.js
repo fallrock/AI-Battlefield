@@ -29,7 +29,6 @@ module.exports.setDroneAI = function(playerId, newLogicFn) {
     for (let drone of gameState.drones) {
         if (drone.id == playerId) {
             drone.ai = newLogicFn;
-            console.log(`Setting ai for player <${playerId}>`);
             return;
         }
     }
