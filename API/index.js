@@ -11,7 +11,3 @@ gameServer.listen(config.gameServer);
 
 const restServer = new RESTServer(engine);
 restServer.listen(config.RESTServer);
-
-setInterval(() => {
-    engine.onTick();
-}, 1000);

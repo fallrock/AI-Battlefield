@@ -3,6 +3,7 @@
 const gen = require('./gen.js');
 
 let gameState = {
+    tps: 10,
     drones: [],
     map: {
         w: 10,
