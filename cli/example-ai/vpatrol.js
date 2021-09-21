@@ -13,7 +13,7 @@ function(drone, gamestate) {
     if (drone.pos.y <= 0) {
         input.rotation = 90;
     }
-    if (drone.pos.y >= gamestate.map.height) {
+    if (drone.pos.y >= gamestate.map.h) {
         input.rotation = 270;
     }
 
