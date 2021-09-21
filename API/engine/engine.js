@@ -3,7 +3,7 @@
 const gen = require('./gen.js');
 
 let gameState = {
-    deltaTime: 10,
+    deltaTime: 1/10,
     drones: [],
     map: {
         w: 10,
