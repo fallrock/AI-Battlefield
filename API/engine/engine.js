@@ -77,7 +77,7 @@ function _processWorld() {
             Math.cos(radians),
             Math.sin(radians),
         ];
-        const vel = fwd.map(e => e * drone.input.enginePower);
+        const vel = fwd.map(e => e * drone.input.enginePower * 1/gameState.tps);
         drone.pos.x += vel[0];
         drone.pos.y += vel[1];
         if (drone.pos.x < 0) { drone.pos.x = 0; }
