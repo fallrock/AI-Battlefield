@@ -10,11 +10,11 @@ function(drone, gamestate) {
         input.rotation = 90;
     }
 
-    if (drone.pos.y <= 0) {
-        input.rotation = 90;
-    }
-    if (drone.pos.y >= gamestate.map.h) {
-        input.rotation = 270;
+    if (
+        drone.pos.x <= 0 || drone.pos.y <= 0 ||
+        drone.pos.x >= gamestate.map.w || drone.pos.y >= gamestate.map.h
+    ) {
+        input.rotation = Math.random() * 360;
     }
 
     return input;

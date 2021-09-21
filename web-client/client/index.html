@@ -2,6 +2,8 @@
    <head>
       <title>AI Battlefield</title>
       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/p5@1.4.0/lib/p5.js"></script>
+      <script type="text/javascript" src="vec2.js"></script>
+      <script type="text/javascript" src="transforms.js"></script>
       <script type="text/javascript" src="client.js"></script>
       <style>
          .full {
@@ -10,11 +12,16 @@
              width: 100%;
              height: 100%;
          }
+         .center {
+             display: flex;
+             justify-content: center;
+             align-items: center;
+        }
       </style>
    </head>
    <body class="full">
       <main class="full">
-          <div class="full" id="p5canvas"></div>
+          <div class="full center" id="p5canvas"></div>
       </main>
    </body>
 </html>
