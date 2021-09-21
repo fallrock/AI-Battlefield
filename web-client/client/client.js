@@ -93,73 +93,100 @@ function _recalcSizes(canvas, map) {
     sizes.strokeW_bold = Math.max(1, sizes.scale / 25);
 }
 
+const mk_m2s = function(pos, rot, map, screen) {
+    const mapScale    = Math.max(...map.array);
+    const screenScale = Math.max(...screen.array);
+    const imMlt = (a, b) => new Vec2(
+        a.x * b.x - a.y * b.y,
+        a.x * b.y + a.y * b.x
+    );
+    return function(vert) {
+        let ret = vert.clone();
+        ret.sub(0.5);           // Center model
+        ret.y = 1 - ret.y;      // Flip model
+        ret.mult(0.5);          // Model space to world space scale
+        ret = imMlt(ret, rot);  // Model space to world space rotation
+        ret.add(pos);           // Model space to world space position
+        ret.div(mapScale);      // World space to NDC
+        ret.mult(screenScale);  // NDC to screen space
+        return ret;
+    }
+}
+
 class View {
-    p5 = null;
+    canvas = null;
     gamestate = null;   ///TODO: crutch
 
-    constructor(dom_canvas) {
-        p5 = new p5((canvas) => {
+    constructor(canvas_parent) {
+        p5.disableFriendlyErrors = true;
+        this.canvas = new p5((p) => {
 
             ///TODO: closures
 
-            canvas.setup = () => {
-                canvas.noCanvas();
-                canvas.noLoop();
-                const c = canvas.createCanvas(100, 100);
+            p.setup = () => {
+                p.noCanvas();
+                p.noLoop();
+                const c = p.createCanvas(100, 100);
                 sizes.canvasRef = c;
-                onWindowResized(canvas);
+                onWindowResized(p);
             };
 
-            canvas.windowResized = () => {
-                onWindowResized(canvas);
+            p.windowResized = () => {
+                onWindowResized(p);
             };
 
-            canvas.draw = () => {
+            p.draw = () => {
                 if (!this.gamestate) return;
 
-                canvas.background(0);
+                p.background(0);
 
-                // world to screen utilities
-                const w2ss = (scalar) => {
-                    return scalar * sizes.scale;
-                };
-                const w2sp = (pos) => {
-                    return [
-                        w2ss(pos[0]),
-                        sizes.canvas.h - w2ss(pos[1])
-                    ];
-                };
-
-                canvas.strokeWeight(0);
+                p.strokeWeight(0);
 
                 this.gamestate.drones.forEach((drone) => {
-                    const scale = sizes.scale;
-                    const r = 0.5;   // in-world size
-                    const p = [drone.pos.x, drone.pos.y];
-                    const c = canvas.color(15, 3, 252);
+                    const pos = new Vec2(drone.pos.x, drone.pos.y);
+                    const rot = new Vec2(
+                        Math.cos(p.radians(drone.input.rotation + 90)),
+                        Math.sin(p.radians(drone.input.rotation + 90)),
+                    );
+                    const map = new Vec2(this.gamestate.map.w, this.gamestate.map.h);
+                    const screen = new Vec2(p.width, p.height);
 
-                    const radians = drone.input.rotation * Math.PI / 180;
-                    const p1 = [
-                        p[0] + r * Math.cos(radians),
-                        p[1] + r * Math.sin(radians),
-                    ];
+                    const m2s = mk_m2s(pos, rot, map, screen);
 
-                    canvas.noFill();
-                    canvas.stroke(c);
-                    canvas.strokeWeight(sizes.strokeW);
-                    canvas.circle(...w2sp(p), w2ss(r*2));
-                    canvas.line(...w2sp(p), ...w2sp(p1));
+                    const c = p.color(15, 3, 252);
+                    p.noFill();
+                    p.stroke(c);
+                    p.strokeWeight(sizes.strokeW);
+
+                    p.beginShape();
+                    p.vertex(...m2s(new Vec2(0.0, 0.0  ) ).array);
+                    p.vertex(...m2s(new Vec2(0.5, 1.0  ) ).array);
+                    p.vertex(...m2s(new Vec2(1.0, 0.0  ) ).array);
+                    p.vertex(...m2s(new Vec2(0.5, 0.25 ) ).array);
+                    p.endShape(p.CLOSE);
+
+
+
+
+                    // const radians = drone.input.rotation * Math.PI / 180;
+                    // const p1 = [
+                    //     p[0] + r * Math.cos(radians),
+                    //     p[1] + r * Math.sin(radians),
+                    // ];
+                    //
+                    // p.circle(...w2sp(p), w2ss(r*2));
+                    // p.line(...w2sp(p), ...w2sp(p1));
                 });
 
             };
 
-        }, dom_canvas);
+        }, canvas_parent);
     }
 
     update(gamestate) {
         this.gamestate = gamestate;
         // console.log(gamestate);
-        p5.redraw();
+        this.canvas.redraw();
     }
 }
 
