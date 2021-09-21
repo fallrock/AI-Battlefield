@@ -29,13 +29,11 @@ class Application {
 class View {
     #p5 = null;
     #canvas = null;
-    #gamestate = null;   ///TODO: crutch
+    #gamestate = null;
 
     constructor(canvas_parent, gamestate) {
         this.#gamestate = gamestate;
         this.#p5 = new p5((p) => {
-
-            ///TODO: closures
 
             p.setup = () => {
                 this.#canvas = p.createCanvas(100, 100);
