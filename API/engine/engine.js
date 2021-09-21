@@ -1,6 +1,7 @@
 'use strict';
 
 const gen = require('./gen.js');
+const airunner = require('../AI-Runner/runner.js');
 
 let gameState = {
     tps: 10,
@@ -60,7 +61,8 @@ module.exports.createDrone = function() {
 function _applyAI() {
     for (let drone of gameState.drones) {
         ///TODO: try/catch, proper input validation
-        let inp = drone.ai(drone, gameState);
+        const inp = airunner.run(gameState, drone.id);
+        ///TODO: move this out of engine
         if (!inp) { continue; }
         if (inp.rotation >= 360) { inp.rotation -= 360; }
         if (inp.rotation < 0) { inp.rotation += 360; }
