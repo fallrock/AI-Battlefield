@@ -6,49 +6,25 @@ const config = {
 };
 
 class Application {
-    view = null;
-    socket = null;
-    gamestate = {};
-
-    constructor(renderer) {
-        this.view = renderer;
-    }
+    #socket = null;
+    onGameState = null;
 
     connect(host, port) {
-        this.socket = new WebSocket(`ws://${host}:${port}`);
-        this.socket.addEventListener('message', (event) => {
+        this.#socket = new WebSocket(`ws://${host}:${port}`);
+        this.#socket.addEventListener('message', (event) => {
             const message = JSON.parse(event.data);
             switch (message.type) {
                 case 'gamestate':
-                    this.onGameStateUpdate(message.gamestate);
+                    if (this.onGameState !== null) {
+                        this.onGameState(message.gamestate);
+                    }
                     break;
                 default:
                     console.error(`unknown message type ${JSON.stringify(message)}`);
             }
         });
     }
-
-    onGameStateUpdate(gamestate) {
-        this.gamestate = gamestate;
-        this.updateView();
-        const mapDims = {w: gamestate.map.w, h: gamestate.map.h};
-    }
-
-    updateView() {
-        this.view.update(this.gamestate);
-    }
-
-    requestGameState() {
-        const request = {
-            type: 'gamestate'
-        };
-        const message = JSON.stringify(request);
-        this.socket.send(message);
-    }
-
 }
-
-///TODO: I don't know what to do, but this is dumb
 
 const mk_m2s = function(pos, rot, map, screen) {
     const mapScale    = Math.max(...map.array);
@@ -73,20 +49,19 @@ const mk_m2s = function(pos, rot, map, screen) {
 }
 
 class View {
-    p5 = null;
-    canvas = null;
-    gamestate = null;   ///TODO: crutch
+    #p5 = null;
+    #canvas = null;
+    #gamestate = null;   ///TODO: crutch
 
-    constructor(canvas_parent) {
-        p5.disableFriendlyErrors = true;
-        this.p5 = new p5((p) => {
+    constructor(canvas_parent, gamestate) {
+        this.#gamestate = gamestate;
+        this.#p5 = new p5((p) => {
 
             ///TODO: closures
 
             p.setup = () => {
-                p.noCanvas();
+                this.#canvas = p.createCanvas(100, 100);
                 p.noLoop();
-                this.canvas = p.createCanvas(100, 100);
                 p.windowResized();
             };
 
@@ -96,19 +71,15 @@ class View {
             };
 
             p.draw = () => {
-                if (!this.gamestate) return;
-
                 p.background(0);
 
-                p.strokeWeight(0);
-
-                this.gamestate.drones.forEach((drone) => {
+                this.#gamestate.drones.forEach((drone) => {
                     const pos = new Vec2(drone.pos.x, drone.pos.y);
                     const rot = new Vec2(
                         Math.cos(p.radians(drone.input.rotation)),
                         Math.sin(p.radians(drone.input.rotation)),
                     );
-                    const map = new Vec2(this.gamestate.map.w, this.gamestate.map.h);
+                    const map = new Vec2(this.#gamestate.map.w, this.#gamestate.map.h);
                     const screen = new Vec2(p.width, p.height);
 
                     const m2s = mk_m2s(pos, rot, map, screen);
@@ -131,12 +102,18 @@ class View {
     }
 
     update(gamestate) {
-        this.gamestate = gamestate;
+        this.#gamestate = gamestate;
         // console.log(gamestate);
-        this.p5.redraw();
+        this.#p5.redraw();
     }
 }
 
 
-const app = new Application(new View('p5canvas'));
+p5.disableFriendlyErrors = true;
+
+const app = new Application();
+app.onGameState = gamestate => {
+    let view = new View('p5canvas', gamestate);
+    app.onGameState = gamestate => view.update(gamestate);
+}
 app.connect(config.host, config.port);
