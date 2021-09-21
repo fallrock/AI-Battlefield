@@ -7,8 +7,8 @@ function mk_m2w(pos, rot, map) {
     const d90 = new Vec2(0, 1);
     return function(vert) {
         let ret = vert.clone();
-        ret.sub(0.5);           // Center model
         ret.y = 1 - ret.y;      // Flip model
+        ret.sub(0.5);           // Center model
         ret.mult(0.5);          // Model space to world space scale
         ret = imMlt(ret, d90);  // Model space to world space rotation
         ret = imMlt(ret, rot);  // Model space to world space rotation
