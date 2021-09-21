@@ -6,7 +6,7 @@ function(drone, gamestate) {
 
     input.enabled = true;
     input.enginePower = 1;
-    input.rotation += 90 / gamestate.tps;
+    input.rotation += 90 * gamestate.deltaTime;
 
     return input;
 }
