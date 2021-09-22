@@ -4,7 +4,7 @@ const gen = require('./gen.js');
 const airunner = require('../AI-Runner/runner.js');
 
 let gameState = {
-    tps: 10,
+    deltaTime: 1/10,
     drones: [],
     map: {
         w: 10,
@@ -79,7 +79,7 @@ function _processWorld() {
             Math.cos(radians),
             Math.sin(radians),
         ];
-        const vel = fwd.map(e => e * drone.input.enginePower);
+        const vel = fwd.map(e => e * drone.input.enginePower * gameState.deltaTime);
         drone.pos.x += vel[0];
         drone.pos.y += vel[1];
         if (drone.pos.x < 0) { drone.pos.x = 0; }

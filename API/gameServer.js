@@ -44,7 +44,7 @@ class GameServer {
     this.tickTimer = setInterval(() => {
       this.engine.onTick();
       this._broadcastGameState();
-    }, 1000 / this.engine.gameState.tps);
+    }, 1000 * this.engine.gameState.deltaTime);
   }
 
   _broadcastGameState() {
