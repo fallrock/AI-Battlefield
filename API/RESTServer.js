@@ -28,8 +28,8 @@ class RESTServer {
     });
 
     // update AI
-    this.app.put('/drone/:id', (req, res) => {
-      const id = req.params.id;
+    this.app.put('/drone', (req, res) => {
+      const id = req.body.id;
       const token = req.body.token;
       const ai = req.body.ai;
       ///TODO: check token
@@ -39,9 +39,9 @@ class RESTServer {
     });
 
     // get current AI
-    this.app.get('/drone/:id', (req, res) => {
+    this.app.get('/drone', (req, res) => {
+      const id = req.body.id;
       const token = req.body.token;
-      const id = req.params.id;
       const ai = this.engine.exportDroneAI(id);
       res.status(200).send({ id, ai });
     });
