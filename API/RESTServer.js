@@ -28,7 +28,7 @@ class RESTServer {
     });
 
     // update AI
-    this.app.patch('/drone/:id', (req, res) => {
+    this.app.put('/drone/:id', (req, res) => {
       const id = req.params.id;
       const token = req.body.token;
       const ai = req.body.ai;
