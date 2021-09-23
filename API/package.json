@@ -18,6 +18,7 @@
   "homepage": "https://github.com/fallrock/AI-Battlefield#readme",
   "dependencies": {
     "express": "^4.17.1",
+    "vm2": "^3.9.3",
     "ws": "^8.2.2"
   }
 }

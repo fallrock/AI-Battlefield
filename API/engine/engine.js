@@ -26,13 +26,16 @@ module.exports.importState = function(data) {
     gameState = JSON.parse(data);
 }
 
-module.exports.setDroneAI = function(playerId, newLogicFn) {
+module.exports.setDroneAI = function(playerId, ai) {
+    ///TODO: find drone in functional style
     for (let drone of gameState.drones) {
         if (drone.id == playerId) {
-            drone.ai = newLogicFn;
+            drone.ai = ai;
+            drone.ai_state.initialized = false;
             return;
         }
     }
+    ///TODO: this function does not return or throw something bad in this case
     console.error(`Player with id <${playerId}> does not exist`);
 }
 
@@ -49,11 +52,14 @@ module.exports.createDrone = function() {
     drone.pos = gen.spawnPoint(gameState);
     drone.id = gen.id();
     drone.input = {
-        enabled: false,
         enginePower: 0,
         rotation: 0,
     };
-    drone.ai = () => {};
+    drone.ai_state = {
+        initialized: false,
+        custom: {},
+    };
+    drone.ai = airunner.dummyAI;
     gameState.drones.push(drone);
     return drone.id;
 }
@@ -73,7 +79,6 @@ function _applyAI() {
 
 function _processWorld() {
     for (let drone of gameState.drones) {
-        if (!drone.input.enabled) { continue; }
         const radians = drone.input.rotation * Math.PI / 180;
         const fwd = [
             Math.cos(radians),

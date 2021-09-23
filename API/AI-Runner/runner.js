@@ -1,41 +1,72 @@
 'use strict';
 const vm = require('vm');
 
-const get_drone = (id, gamestate) =>
-      gamestate.drones.find(d => d.id === id);
-// const get_drone => (id) => db.drone[id];
+const dummyAI = `
+    'use strict';
+    const start = () => {};
+    const update = () => {};
+  `;
 
-const create_context = (gamestate, id) => {
-  ///TODO: hide something
-  ///TODO: move input to database
-  // const drone = db.drone[id];
-  const drone = get_drone(id, gamestate);
-  const context = {
-    gamestate: gamestate,
-    id: id,
+// util
+const find_drone = (id, gamestate) => {
+  return gamestate.drones.find(d => d.id === id);
+};
+
+///TODO: filter visibility and r/w permissions here (ai interface)
+const create_context = (id, gamestate) => {
+  const drone = find_drone(id, gamestate);
+  const state = drone.ai_state;
+  const data = {
+    initialized: state.initialized,
+    custom: state.custom,
     input: drone.input,
-    state: drone.state
-  };
 
-  ///TODO: memory leak?
-  vm.createContext(context);
+    // read-only data:
+    drone: drone,
+    gamestate: gamestate,
+  };
+  const context = vm.createContext(data);
   return context;
 };
 
-const create_ai = (ai) => {
-  ///TODO: boilerplate
-  //TODO: safety
-  return new vm.Script(ai);
+const compile_ai = (ai) => {
+  const script = new vm.Script(ai);
+  return script;
+};
+
+const export_methods = (script, context) => {
+  const exported = script.runInContext(context);
+  return exported;
+};
+
+const execute_ai = (ai, context, exported) => {
+  context.start = exported.start;
+  context.update = exported.update;
+  const script = new vm.Script(`
+    'use strict';
+    if (initialized === false) {
+      start();
+      initialized = true;
+    }
+    update();
+  `);
+  script.runInContext(context);
+  const result = {
+    initialized: context.initialized,
+    custom: context.custom,
+    input: context.input
+  };
+  return result;
 };
 
 const run = (gamestate, id) => {
-  // const drone = db.drone[id];
-  const drone = gamestate.drones.find((d) => d.id === id);
-  const context = create_context(gamestate, id);
-  const ai = create_ai(drone.ai);
-  ai.runInContext(context);
-
-  return context.input;
+  const ai = compile_ai(find_drone(id, gamestate).ai);
+  const context = create_context(id, gamestate);
+  const exported = export_methods(ai, context);
+  const result = execute_ai(ai, context, exported);
+  ///TODO: apply ai properly
+  // console.log(result);
+  return result.input;
 };
 
-module.exports = { run };
+module.exports = { run, dummyAI };
