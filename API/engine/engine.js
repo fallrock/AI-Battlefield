@@ -67,18 +67,21 @@ module.exports.createDrone = function() {
 function _applyAI() {
     for (let drone of gameState.drones) {
         ///TODO: try/catch, proper input validation
+        try {
+            const result = airunner.run(gameState, drone.id);
+            drone.ai_state.initialized = result.initialized;
+            drone.ai_state.custom = result.custom;
 
-        const result = airunner.run(gameState, drone.id);
-        drone.ai_state.initialized = result.initialized;
-        drone.ai_state.custom = result.custom;
-
-        const input = result.input;
-        ///TODO: move this out of engine
-        if (!input) { continue; }
-        if (input.rotation >= 360) { inp.rotation -= 360; }
-        if (input.rotation < 0) { inp.rotation += 360; }
-        input.enginePower = Math.max(0, Math.min(1, input.enginePower));
-        drone.input = { ...drone.input, ...input };
+            const input = result.input;
+            ///TODO: move this out of engine
+            if (!input) { continue; }
+            if (input.rotation >= 360) { input.rotation -= 360; }
+            if (input.rotation < 0) { input.rotation += 360; }
+            input.enginePower = Math.max(0, Math.min(1, input.enginePower));
+            drone.input = input;
+        } catch (error) {
+            console.error(`ai failed: ${error}`);
+        }
     }
 }
 

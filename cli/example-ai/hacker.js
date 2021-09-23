@@ -6,6 +6,6 @@ const start = () => {
     gamestate.drones[0] = {};
 };
 
-const update = () => {
-    input.rotation += 1;
-};
+// const update = () => {
+//     input.rotation += 1;
+// };

@@ -1,16 +1,24 @@
 'use strict';
 
-drone.input.enginePower = 1;
+const start = () => {
+    input.enginePower = 1;
+    input.rotation = 0;
 
-if (drone.pos.y === 0 && drone.pos.x !== gamestate.map.w) {
-    drone.input.rotation = 0;
-}
-if (drone.pos.x === gamestate.map.w && drone.pos.y !== gamestate.map.h) {
-    drone.input.rotation = 90;
-}
-if (drone.pos.y === gamestate.map.h && drone.pos.x !== 0) {
-    drone.input.rotation = 180;
-}
-if (drone.pos.x === 0 && drone.pos.y !== 0) {
-    drone.input.rotation = 270;
-}
+    // demonstration purpose only
+    custom.name = 'border-patrol';
+};
+
+const update = () => {
+    if (drone.pos.y === 0 && drone.pos.x !== gamestate.map.w) {
+        input.rotation = 0;
+    }
+    if (drone.pos.x === gamestate.map.w && drone.pos.y !== gamestate.map.h) {
+        input.rotation = 90;
+    }
+    if (drone.pos.y === gamestate.map.h && drone.pos.x !== 0) {
+        input.rotation = 180;
+    }
+    if (drone.pos.x === 0 && drone.pos.y !== 0) {
+        input.rotation = 270;
+    }
+};
