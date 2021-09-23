@@ -67,13 +67,18 @@ module.exports.createDrone = function() {
 function _applyAI() {
     for (let drone of gameState.drones) {
         ///TODO: try/catch, proper input validation
-        const inp = airunner.run(gameState, drone.id);
+
+        const result = airunner.run(gameState, drone.id);
+        drone.ai_state.initialized = result.initialized;
+        drone.ai_state.custom = result.custom;
+
+        const input = result.input;
         ///TODO: move this out of engine
-        if (!inp) { continue; }
-        if (inp.rotation >= 360) { inp.rotation -= 360; }
-        if (inp.rotation < 0) { inp.rotation += 360; }
-        inp.enginePower = Math.max(0, Math.min(1, inp.enginePower));
-        drone.input = { ...drone.input, ...inp };
+        if (!input) { continue; }
+        if (input.rotation >= 360) { inp.rotation -= 360; }
+        if (input.rotation < 0) { inp.rotation += 360; }
+        input.enginePower = Math.max(0, Math.min(1, input.enginePower));
+        drone.input = { ...drone.input, ...input };
     }
 }
 

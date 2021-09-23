@@ -1,30 +1,29 @@
 'use strict';
 const vm = require('vm');
+const clone = require('just-clone');
 
-const dummyAI = `
-    'use strict';
-    const start = () => {};
-    const update = () => {};
-  `;
+const dummyAI = `'use strict'; const start = () => {}; const update = () => {};`;
 
 // util
 const find_drone = (id, gamestate) => {
   return gamestate.drones.find(d => d.id === id);
 };
 
-///TODO: filter visibility and r/w permissions here (ai interface)
 const create_context = (id, gamestate) => {
   const drone = find_drone(id, gamestate);
   const state = drone.ai_state;
   const data = {
+    // mutable data
     initialized: state.initialized,
-    custom: state.custom,
-    input: drone.input,
+    custom: clone(state.custom),
+    input: clone(drone.input),
 
     // read-only data:
-    drone: drone,
-    gamestate: gamestate,
+    ///TODO: hide sensitive data
+    gamestate: clone(gamestate),
+    drone: clone(drone),
   };
+
   const context = vm.createContext(data);
   return context;
 };
@@ -64,9 +63,7 @@ const run = (gamestate, id) => {
   const context = create_context(id, gamestate);
   const exported = export_methods(ai, context);
   const result = execute_ai(ai, context, exported);
-  ///TODO: apply ai properly
-  // console.log(result);
-  return result.input;
+  return result;
 };
 
 module.exports = { run, dummyAI };
