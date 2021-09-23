@@ -32,6 +32,7 @@ function mk_m2s(pos, rot, map, screen) {
     const m2n = mk_m2n(pos, rot, map);
     return function(vert) {
         let ret = m2n(vert);
+        ret.y = 1 - ret.y;
         ret.mult(screenScale);  // NDC to screen space
         return ret;
     }
