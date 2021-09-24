@@ -36,7 +36,7 @@ const filter_gameview = (id, gamestate) => {
 
   const gameview = {
     game: game,
-    get drone() { return find_drone(id, this.game) },
+    drone: player,
   };
   return gameview;
 };
