@@ -9,6 +9,38 @@ const find_drone = (id, gamestate) => {
   return gamestate.drones.find(d => d.id === id);
 };
 
+///TODO: move this logic somewhere else
+const filter_gameview = (id, gamestate) => {
+  const game = clone(gamestate);
+
+  const player = find_drone(id, game);
+
+  game.drones = game.drones.filter(d => d !== player);
+  game.drones.sort((a, b) => {
+    const dist = (first, second) => {
+      const delta = (a, b) => {return {
+        x: a.x - b.x,
+        y: a.y - b.y,
+      }};
+      const mag = (a) => Math.sqrt(a.x * a.x + a.y * a.y);
+
+      return mag(delta(first, second));
+    };
+
+    const d1 = dist(player.pos, a.pos);
+    const d2 = dist(player.pos, b.pos);
+
+    if (d1 === d2) return 0;
+    return d1 > d2 ? 1 : -1;
+  });
+
+  const gameview = {
+    game: game,
+    get drone() { return find_drone(id, this.game) },
+  };
+  return gameview;
+};
+
 const create_context = (id, gamestate) => {
   const drone = find_drone(id, gamestate);
   const state = drone.ai_state;
@@ -16,12 +48,10 @@ const create_context = (id, gamestate) => {
     // mutable data
     initialized: state.initialized,
     custom: clone(state.custom),
-    input: clone(drone.input),
+    input: clone(drone.input),  ///TODO: move input to drone (view drone.pos && edit drone.rotation)
 
     // read-only data:
-    ///TODO: hide sensitive data
-    gamestate: clone(gamestate),
-    drone: clone(drone),
+    ...filter_gameview(id, gamestate),
   };
 
   const context = vm.createContext(data);
