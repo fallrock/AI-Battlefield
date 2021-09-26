@@ -25,23 +25,33 @@ pub fn create_drone() ?User {
 }
 
 pub fn set_ai(u User, ai string) ? {
-	patch := AiPacket{
+	packet := AiPacket{
 		id: u.id
 		token: u.token
 		ai: ai
 	}
-	patch_json(aibf.url + '/$u.id', json.encode(patch)) ?
+	put_json(aibf.url, json.encode(packet)) ?
 }
 
 pub fn get_ai(u User) ?AiPacket {
-	s := http.get(aibf.url + '/$u.id') ?.text
+	s := get_json(aibf.url, json.encode(u)) ?.text
 	return json.decode(AiPacket, s) or {}
 }
 
-// patch_json sends a PATCH HTTP request to the URL with a JSON data
-fn patch_json(url string, data string) ?http.Response {
+// get_json sends a GET HTTP request to the URL with a JSON data
+fn get_json(url string, data string) ?http.Response {
 	return http.fetch(
-		method: .patch
+		method: .get
+		url: url
+		data: data
+		header: http.new_header(key: .content_type, value: 'application/json')
+	)
+}
+
+// put_json sends a PUT HTTP request to the URL with a JSON data
+fn put_json(url string, data string) ?http.Response {
+	return http.fetch(
+		method: .put
 		url: url
 		data: data
 		header: http.new_header(key: .content_type, value: 'application/json')
