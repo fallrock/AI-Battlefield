@@ -30,8 +30,7 @@ const filter_gameview = (id, gamestate) => {
     const d1 = dist(player.pos, a.pos);
     const d2 = dist(player.pos, b.pos);
 
-    if (d1 === d2) return 0;
-    return d1 > d2 ? 1 : -1;
+    return d1 - d2;
   });
 
   const gameview = {
@@ -63,21 +62,26 @@ const compile_ai = (ai) => {
   return script;
 };
 
+/* get start and update functions from ai */
 const export_methods = (script, context) => {
   const exported = script.runInContext(context);
   return exported;
 };
 
-const execute_ai = (ai, context, exported) => {
+const execute_ai = (context, exported) => {
   context.start = exported.start;
   context.update = exported.update;
   const script = new vm.Script(`
     'use strict';
     if (initialized === false) {
-      start();
+      if (start) {
+        start();
+      }
       initialized = true;
     }
-    update();
+    if (update) {
+      update();
+    }
   `);
   script.runInContext(context);
   const result = {
@@ -92,7 +96,7 @@ const run = (gamestate, id) => {
   const ai = compile_ai(find_drone(id, gamestate).ai);
   const context = create_context(id, gamestate);
   const exported = export_methods(ai, context);
-  const result = execute_ai(ai, context, exported);
+  const result = execute_ai(context, exported);
   return result;
 };
 
