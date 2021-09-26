@@ -1,6 +1,7 @@
 'use strict';
 
 const gen = require('./gen.js');
+const airunner = require('../AI-Runner/runner.js');
 
 let gameState = {
     deltaTime: 1/10,
@@ -25,13 +26,16 @@ module.exports.importState = function(data) {
     gameState = JSON.parse(data);
 }
 
-module.exports.setDroneAI = function(playerId, newLogicFn) {
+module.exports.setDroneAI = function(playerId, ai) {
+    ///TODO: find drone in functional style
     for (let drone of gameState.drones) {
         if (drone.id == playerId) {
-            drone.ai = newLogicFn;
+            drone.ai = ai;
+            drone.ai_state.initialized = false;
             return;
         }
     }
+    ///TODO: this function does not return or throw something bad in this case
     console.error(`Player with id <${playerId}> does not exist`);
 }
 
@@ -48,11 +52,14 @@ module.exports.createDrone = function() {
     drone.pos = gen.spawnPoint(gameState);
     drone.id = gen.id();
     drone.input = {
-        enabled: false,
         enginePower: 0,
         rotation: 0,
     };
-    drone.ai = () => {};
+    drone.ai_state = {
+        initialized: false,
+        custom: {},
+    };
+    drone.ai = airunner.dummyAI;
     gameState.drones.push(drone);
     return drone.id;
 }
@@ -60,18 +67,26 @@ module.exports.createDrone = function() {
 function _applyAI() {
     for (let drone of gameState.drones) {
         ///TODO: try/catch, proper input validation
-        let inp = drone.ai(drone, gameState);
-        if (!inp) { continue; }
-        if (inp.rotation >= 360) { inp.rotation -= 360; }
-        if (inp.rotation < 0) { inp.rotation += 360; }
-        inp.enginePower = Math.max(0, Math.min(1, inp.enginePower));
-        drone.input = { ...drone.input, ...inp };
+        try {
+            const result = airunner.run(gameState, drone.id);
+            drone.ai_state.initialized = result.initialized;
+            drone.ai_state.custom = result.custom;
+
+            const input = result.input;
+            ///TODO: move this out of engine
+            if (!input) { continue; }
+            if (input.rotation >= 360) { input.rotation -= 360; }
+            if (input.rotation < 0) { input.rotation += 360; }
+            input.enginePower = Math.max(0, Math.min(1, input.enginePower));
+            drone.input = input;
+        } catch (error) {
+            console.error(`ai failed: ${error}`);
+        }
     }
 }
 
 function _processWorld() {
     for (let drone of gameState.drones) {
-        if (!drone.input.enabled) { continue; }
         const radians = drone.input.rotation * Math.PI / 180;
         const fwd = [
             Math.cos(radians),
