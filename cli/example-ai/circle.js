@@ -1,14 +1,9 @@
 'use strict';
-return (
 
-function(drone, gamestate) {
-    let input = drone.input;
-
-    input.enabled = true;
+const start = () => {
     input.enginePower = 1;
-    input.rotation += 90 * gamestate.deltaTime;
+};
 
-    return input;
-}
-
-).apply(this, arguments);
+const update = () => {
+    input.rotation += 10;
+};

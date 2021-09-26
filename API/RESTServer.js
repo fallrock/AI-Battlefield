@@ -34,7 +34,7 @@ class RESTServer {
       const ai = req.body.ai;
       ///TODO: check token
       ///TODO: validate ai
-      this.engine.setDroneAI(id, new Function(ai));
+      this.engine.setDroneAI(id, ai);
       res.status(200).send({});
     });
 
