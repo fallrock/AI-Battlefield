@@ -82,10 +82,17 @@ class View {
 
                 this.#ticks.first.gamestate.drones.forEach((_, drone_i) => {
                     const pos = new Vec2(ti(e => e.drones[drone_i].pos.x), ti(e => e.drones[drone_i].pos.y));
-                    const rot = new Vec2(
-                        Math.cos(p.radians(ti(e => e.drones[drone_i].input.rotation))),
-                        Math.sin(p.radians(ti(e => e.drones[drone_i].input.rotation))),
-                    );
+                    const rot = Vec2.lerp(
+                        new Vec2(
+                            Math.cos(p.radians(this.#ticks.first.gamestate.drones[drone_i].input.rotation)),
+                            Math.sin(p.radians(this.#ticks.first.gamestate.drones[drone_i].input.rotation)),
+                        ),
+                        new Vec2(
+                            Math.cos(p.radians(this.#ticks.last.gamestate.drones[drone_i].input.rotation)),
+                            Math.sin(p.radians(this.#ticks.last.gamestate.drones[drone_i].input.rotation)),
+                        ),
+                        tick_t
+                    ).normalized;
                     const map = new Vec2(ti(e => e.map.w), ti(e => e.map.h));
                     const screen = new Vec2(p.width, p.height);
 

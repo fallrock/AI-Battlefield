@@ -38,7 +38,7 @@ class Vec2 {
         this.y /= scalar;
     }
     normalize() {
-        const m = this.magnitude();
+        const m = this.magnitude;
         if (m != 0) {
             this.x /= m;
             this.y /= m;
@@ -54,5 +54,9 @@ class Vec2 {
     }
     get array() {
         return [this.x, this.y];
+    }
+    static lerp(a, b, t) {
+        const lerp = (a, b, t) => a * (1 - t) + b * t;
+        return new Vec2(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
     }
 }
