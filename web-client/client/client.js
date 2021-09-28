@@ -26,13 +26,34 @@ class Application {
     }
 }
 
+class Switch {
+    #a = [null, null];
+    #i = 0;
+    constructor(last, first = null) {
+        this.push(first);
+        this.push(last);
+    }
+    get first() {
+        return a[(i + 1) % 2];
+    }
+    get last() {
+        return a[i];
+    }
+    push(v) {
+        i = (i + 1) % 2;
+        a[i] = v;
+    }
+}
+
 class View {
     #p5 = null;
     #canvas = null;
     #gamestate = null;
+    ticks = null;
 
     constructor(canvas_parent, gamestate) {
         this.#gamestate = gamestate;
+        this.#ticks = new Switch(gamestate, gamestate);
         this.#p5 = new p5((p) => {
 
             p.setup = () => {
