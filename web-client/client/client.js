@@ -91,22 +91,34 @@ class View {
                         Math.cos(p.radians(d2.input.rotation)),
                         Math.sin(p.radians(d2.input.rotation)),
                     );
-                    const rot = Vec2.lerp(rot1, rot2, tick_t).normalized;
                     // const pos = Vec2.lerp(d1.pos, d2.pos, tick_t);
-                    const pos = (() => {
+                    // const rot = Vec2.lerp(rot1, rot2, tick_t).normalized;
+                    const [pos, rot] = (() => {
+                        const dt = this.#ticks.last.gamestate.deltaTime;
                         const p1 = new Vec2(d1.pos.x, d1.pos.y);
                         const p2 = new Vec2(d2.pos.x, d2.pos.y);
                         const v1 = rot1.clone();
                         const v2 = rot2.clone();
                         v1.mult(d1.input.enginePower);
                         v2.mult(d2.input.enginePower);
-                        v1.mult(this.#ticks.last.gamestate.deltaTime * 1/3);
-                        v2.mult(this.#ticks.last.gamestate.deltaTime * 1/3);
+                        v1.mult(dt * 1/3);
+                        v2.mult(dt * 1/3);
                         const pp1 = p1.clone();
                         const pp2 = p2.clone();
                         pp1.add(v1);
                         pp2.sub(v2);
-                        return Vec2.bezier(p1, pp1, pp2, p2, tick_t);
+                        const fakerot = Vec2.bezier_deriv(p1, pp1, pp2, p2, tick_t);
+                        const realrot = Vec2.lerp(rot1, rot2, tick_t).normalized;
+                        let rot;
+                        if (dt >= 1) {
+                            rot = fakerot.magnitude > 0.000001 ? fakerot.normalized : realrot;
+                        } else {
+                            rot = realrot;
+                        }
+                        return [
+                            Vec2.bezier(p1, pp1, pp2, p2, tick_t),
+                            rot,
+                        ];
                     })();
                     const map = new Vec2(ti(e => e.map.w), ti(e => e.map.h));
                     const screen = new Vec2(p.width, p.height);

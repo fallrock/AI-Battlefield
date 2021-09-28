@@ -68,4 +68,19 @@ class Vec2 {
         const j = Vec2.lerp(h, i, t);
         return j;
     }
+    static bezier_deriv(a, b, c, d, t) {
+        const _a = a.clone();
+        const _b = b.clone();
+        const _c = c.clone();
+        const _d = d.clone();
+        _a.mult(-3*t*t +6*t -3);
+        _b.mult(+9*t*t -12*t +3);
+        _c.mult(-9*t*t +6*t);
+        _d.mult(+3*t*t);
+        let r = _a.clone();
+        r.add(_b);
+        r.add(_c);
+        r.add(_d);
+        return r;
+    }
 }
