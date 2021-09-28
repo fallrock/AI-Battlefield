@@ -59,4 +59,13 @@ class Vec2 {
         const lerp = (a, b, t) => a * (1 - t) + b * t;
         return new Vec2(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
     }
+    static bezier(a, b, c, d, t) {
+        const e = Vec2.lerp(a, b, t);
+        const f = Vec2.lerp(b, c, t);
+        const g = Vec2.lerp(c, d, t);
+        const h = Vec2.lerp(e, f, t);
+        const i = Vec2.lerp(f, g, t);
+        const j = Vec2.lerp(h, i, t);
+        return j;
+    }
 }

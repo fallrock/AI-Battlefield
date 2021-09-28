@@ -50,14 +50,14 @@ class View {
     #canvas = null;
     #ticks = null;
 
-    constructor(canvas_parent, gamestate) {
-        const tick = {gamestate, time: Date.now()};
-        this.#ticks = new Switch(tick, tick);
+    constructor(canvas_parent, tick1, tick2) {
+        this.#ticks = new Switch(tick2, tick1);
         this.#p5 = new p5((p) => {
 
             p.setup = () => {
                 this.#canvas = p.createCanvas(100, 100);
                 // p.noLoop();
+                // p.frameRate(10);
                 p.windowResized();
             };
 
@@ -81,18 +81,33 @@ class View {
                 // console.log(tick_t);
 
                 this.#ticks.first.gamestate.drones.forEach((_, drone_i) => {
-                    const pos = new Vec2(ti(e => e.drones[drone_i].pos.x), ti(e => e.drones[drone_i].pos.y));
-                    const rot = Vec2.lerp(
-                        new Vec2(
-                            Math.cos(p.radians(this.#ticks.first.gamestate.drones[drone_i].input.rotation)),
-                            Math.sin(p.radians(this.#ticks.first.gamestate.drones[drone_i].input.rotation)),
-                        ),
-                        new Vec2(
-                            Math.cos(p.radians(this.#ticks.last.gamestate.drones[drone_i].input.rotation)),
-                            Math.sin(p.radians(this.#ticks.last.gamestate.drones[drone_i].input.rotation)),
-                        ),
-                        tick_t
-                    ).normalized;
+                    const d1 = this.#ticks.first.gamestate.drones[drone_i];
+                    const d2 = this.#ticks.last.gamestate.drones[drone_i];
+                    const rot1 = new Vec2(
+                        Math.cos(p.radians(d1.input.rotation)),
+                        Math.sin(p.radians(d1.input.rotation)),
+                    );
+                    const rot2 = new Vec2(
+                        Math.cos(p.radians(d2.input.rotation)),
+                        Math.sin(p.radians(d2.input.rotation)),
+                    );
+                    const rot = Vec2.lerp(rot1, rot2, tick_t).normalized;
+                    // const pos = Vec2.lerp(d1.pos, d2.pos, tick_t);
+                    const pos = (() => {
+                        const p1 = new Vec2(d1.pos.x, d1.pos.y);
+                        const p2 = new Vec2(d2.pos.x, d2.pos.y);
+                        const v1 = rot1.clone();
+                        const v2 = rot2.clone();
+                        v1.mult(d1.input.enginePower);
+                        v2.mult(d2.input.enginePower);
+                        v1.mult(this.#ticks.last.gamestate.deltaTime * 1/3);
+                        v2.mult(this.#ticks.last.gamestate.deltaTime * 1/3);
+                        const pp1 = p1.clone();
+                        const pp2 = p2.clone();
+                        pp1.add(v1);
+                        pp2.sub(v2);
+                        return Vec2.bezier(p1, pp1, pp2, p2, tick_t);
+                    })();
                     const map = new Vec2(ti(e => e.map.w), ti(e => e.map.h));
                     const screen = new Vec2(p.width, p.height);
 
@@ -126,8 +141,12 @@ class View {
 p5.disableFriendlyErrors = true;
 
 const app = new Application();
-app.onGameState = gamestate => {
-    let view = new View('p5canvas', gamestate);
-    app.onGameState = gamestate => view.update(gamestate);
+app.onGameState = g1 => {
+    app.onGameState = g2 => {
+        const t1 = {gamestate: g1, time: Date.now()};
+        const t2 = {gamestate: g2, time: Date.now()};
+        let view = new View('p5canvas', t1, t2);
+        app.onGameState = gamestate => view.update(gamestate);
+    }
 }
 app.connect(config.host, config.port);
