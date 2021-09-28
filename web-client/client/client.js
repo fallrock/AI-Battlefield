@@ -69,11 +69,11 @@ class View {
                 p.background(0);
 
                 const inv_lerp = (a, b, v) => (v - a) / (b - a);
-                const tick_t = Math.max(0, Math.min(1, inv_lerp(
+                const tick_t = inv_lerp(
                     this.#ticks.last.time,
                     this.#ticks.last.time + this.#ticks.last.gamestate.deltaTime * 1000,
                     Date.now()
-                )));
+                );
                 const ti = f => p.lerp(f(this.#ticks.first.gamestate), f(this.#ticks.last.gamestate), tick_t);
 
                 this.#ticks.first.gamestate.drones.forEach((_, drone_i) => {
