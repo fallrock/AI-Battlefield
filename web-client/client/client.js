@@ -56,7 +56,6 @@ class View {
 
             p.setup = () => {
                 this.#canvas = p.createCanvas(100, 100);
-                // p.noLoop();
                 // p.frameRate(10);
                 p.windowResized();
             };
@@ -75,10 +74,7 @@ class View {
                     this.#ticks.last.time + this.#ticks.last.gamestate.deltaTime * 1000,
                     Date.now()
                 )));
-                const lerp = (a, b, t) => a * (1 - t) + b * t;
-                const interp = lerp;
-                const ti = f => interp(f(this.#ticks.first.gamestate), f(this.#ticks.last.gamestate), tick_t);
-                // console.log(tick_t);
+                const ti = f => p.lerp(f(this.#ticks.first.gamestate), f(this.#ticks.last.gamestate), tick_t);
 
                 this.#ticks.first.gamestate.drones.forEach((_, drone_i) => {
                     const d1 = this.#ticks.first.gamestate.drones[drone_i];
@@ -145,7 +141,6 @@ class View {
     update(gamestate) {
         this.#ticks.push({gamestate, time: Date.now()});
         // console.log(gamestate);
-        // this.#p5.redraw();
     }
 }
 
