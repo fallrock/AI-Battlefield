@@ -74,6 +74,11 @@ class View {
                     this.#ticks.last.time + this.#ticks.last.gamestate.deltaTime * 1000,
                     Date.now()
                 );
+                const rot_t = Math.max(0, Math.min(1, inv_lerp(
+                    this.#ticks.last.time,
+                    this.#ticks.last.time + Math.min(1/3, this.#ticks.last.gamestate.deltaTime) * 1000,
+                    Date.now()
+                )));
                 const ti = f => p.lerp(f(this.#ticks.first.gamestate), f(this.#ticks.last.gamestate), tick_t);
 
                 this.#ticks.first.gamestate.drones.forEach((_, drone_i) => {
@@ -104,7 +109,7 @@ class View {
                         pp1.add(v1);
                         pp2.sub(v2);
                         const fakerot = Vec2.bezier_deriv(p1, pp1, pp2, p2, tick_t);
-                        const realrot = Vec2.lerp(rot1, rot2, tick_t).normalized;
+                        const realrot = Vec2.lerp(rot1, rot2, rot_t).normalized;
                         let rot;
                         if (dt >= 1) {
                             rot = fakerot.magnitude > 0.000001 ? fakerot.normalized : realrot;
