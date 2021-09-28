@@ -34,31 +34,30 @@ class Switch {
         this.push(last);
     }
     get first() {
-        return a[(i + 1) % 2];
+        return this.#a[(this.#i + 1) % 2];
     }
     get last() {
-        return a[i];
+        return this.#a[this.#i];
     }
     push(v) {
-        i = (i + 1) % 2;
-        a[i] = v;
+        this.#i = (this.#i + 1) % 2;
+        this.#a[this.#i] = v;
     }
 }
 
 class View {
     #p5 = null;
     #canvas = null;
-    #gamestate = null;
-    ticks = null;
+    #ticks = null;
 
     constructor(canvas_parent, gamestate) {
-        this.#gamestate = gamestate;
-        this.#ticks = new Switch(gamestate, gamestate);
+        const tick = {gamestate, time: Date.now()};
+        this.#ticks = new Switch(tick, tick);
         this.#p5 = new p5((p) => {
 
             p.setup = () => {
                 this.#canvas = p.createCanvas(100, 100);
-                p.noLoop();
+                // p.noLoop();
                 p.windowResized();
             };
 
@@ -70,13 +69,24 @@ class View {
             p.draw = () => {
                 p.background(0);
 
-                this.#gamestate.drones.forEach((drone) => {
-                    const pos = new Vec2(drone.pos.x, drone.pos.y);
+                const inv_lerp = (a, b, v) => (v - a) / (b - a);
+                const tick_t = Math.max(0, Math.min(1, inv_lerp(
+                    this.#ticks.last.time,
+                    this.#ticks.last.time + this.#ticks.last.gamestate.deltaTime * 1000,
+                    Date.now()
+                )));
+                const lerp = (a, b, t) => a * (1 - t) + b * t;
+                const interp = lerp;
+                const ti = f => interp(f(this.#ticks.first.gamestate), f(this.#ticks.last.gamestate), tick_t);
+                // console.log(tick_t);
+
+                this.#ticks.first.gamestate.drones.forEach((_, drone_i) => {
+                    const pos = new Vec2(ti(e => e.drones[drone_i].pos.x), ti(e => e.drones[drone_i].pos.y));
                     const rot = new Vec2(
-                        Math.cos(p.radians(drone.input.rotation)),
-                        Math.sin(p.radians(drone.input.rotation)),
+                        Math.cos(p.radians(ti(e => e.drones[drone_i].input.rotation))),
+                        Math.sin(p.radians(ti(e => e.drones[drone_i].input.rotation))),
                     );
-                    const map = new Vec2(this.#gamestate.map.w, this.#gamestate.map.h);
+                    const map = new Vec2(ti(e => e.map.w), ti(e => e.map.h));
                     const screen = new Vec2(p.width, p.height);
 
                     const m2s = mk_m2s(pos, rot, map, screen);
@@ -99,9 +109,9 @@ class View {
     }
 
     update(gamestate) {
-        this.#gamestate = gamestate;
+        this.#ticks.push({gamestate, time: Date.now()});
         // console.log(gamestate);
-        this.#p5.redraw();
+        // this.#p5.redraw();
     }
 }
 
