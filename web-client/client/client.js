@@ -74,7 +74,7 @@ class View {
                     this.#ticks.last.time + this.#ticks.last.gamestate.deltaTime * 1000,
                     Date.now()
                 );
-                const rot_t = Math.max(0, Math.min(1, inv_lerp(
+                const dir_t = Math.max(0, Math.min(1, inv_lerp(
                     this.#ticks.last.time,
                     this.#ticks.last.time + Math.min(1/3, this.#ticks.last.gamestate.deltaTime) * 1000,
                     Date.now()
@@ -84,24 +84,24 @@ class View {
                 this.#ticks.first.gamestate.drones.forEach((_, drone_i) => {
                     const d1 = this.#ticks.first.gamestate.drones[drone_i];
                     const d2 = this.#ticks.last.gamestate.drones[drone_i];
-                    const rot1 = new Vec2(
+                    const dir1 = new Vec2(
                         Math.cos(p.radians(d1.input.rotation)),
                         Math.sin(p.radians(d1.input.rotation)),
                     );
-                    const rot2 = new Vec2(
+                    const dir2 = new Vec2(
                         Math.cos(p.radians(d2.input.rotation)),
                         Math.sin(p.radians(d2.input.rotation)),
                     );
                     // const pos = Vec2.lerp(d1.pos, d2.pos, tick_t);
-                    // const rot = Vec2.lerp(rot1, rot2, tick_t).normalized;
-                    const [pos, rot] = (() => {
+                    // const dir = Vec2.lerp(dir1, dir2, tick_t).normalized;
+                    const [pos, dir] = (() => {
                         const dt = this.#ticks.last.gamestate.deltaTime;
 
                         const p1 = new Vec2(d1.pos.x, d1.pos.y);
                         const p2 = new Vec2(d2.pos.x, d2.pos.y);
 
-                        const v1 = rot1.clone();
-                        const v2 = rot2.clone();
+                        const v1 = dir1.clone();
+                        const v2 = dir2.clone();
                         v1.mult(d1.input.enginePower);
                         v2.mult(d2.input.enginePower);
                         v1.mult(dt * 1/3);
@@ -112,23 +112,23 @@ class View {
                         pp1.add(v1);
                         pp2.sub(v2);
 
-                        const fakerot = Vec2.bezier_deriv(p1, pp1, pp2, p2, tick_t);
-                        const realrot = Vec2.lerp(rot1, rot2, rot_t).normalized;
-                        let rot;
+                        const fakedir = Vec2.bezier_deriv(p1, pp1, pp2, p2, tick_t);
+                        const realdir = Vec2.lerp(dir1, dir2, dir_t).normalized;
+                        let dir;
                         if (dt >= 1) {
-                            rot = fakerot.magnitude > 0.000001 ? fakerot.normalized : realrot;
+                            dir = fakedir.magnitude > 0.000001 ? fakedir.normalized : realdir;
                         } else {
-                            rot = realrot;
+                            dir = realdir;
                         }
                         return [
                             Vec2.bezier(p1, pp1, pp2, p2, tick_t),
-                            rot,
+                            dir,
                         ];
                     })();
                     const map = new Vec2(ti(e => e.map.w), ti(e => e.map.h));
                     const screen = new Vec2(p.width, p.height);
 
-                    const m2s = mk_m2s(pos, rot, map, screen);
+                    const m2s = mk_m2s(pos, dir, map, screen);
 
                     const c = p.color(15, 3, 252);
                     p.noFill();
