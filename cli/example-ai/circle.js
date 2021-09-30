@@ -5,5 +5,5 @@ const start = () => {
 };
 
 const update = () => {
-    input.rotation += 10;
+    input.rotation += 90 * game.deltaTime;
 };
