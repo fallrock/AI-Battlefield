@@ -4,7 +4,7 @@ const gen = require('./gen.js');
 const airunner = require('../AI-Runner/runner.js');
 
 let gameState = {
-    deltaTime: 1/2,
+    deltaTime: 1/4,
     drones: [],
     map: {
         w: 10,
