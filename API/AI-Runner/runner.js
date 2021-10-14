@@ -101,3 +101,18 @@ const run = (gamestate, id) => {
 };
 
 module.exports = { run, dummyAI };
+
+(function main() {
+    const readline = require('readline');
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+        terminal: false
+    });
+
+    rl.on('line', function(line){
+        const data = JSON.parse(line);
+        const result = run(data.engine, data.id);
+        rl.write(JSON.stringify(result));
+    })
+})();
