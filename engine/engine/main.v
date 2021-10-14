@@ -20,12 +20,18 @@ pub:
 pub mut:
 	position Complex
 	inputs   DroneInputs
+	ai_state AiState
 }
 
 pub struct DroneInputs {
 pub mut:
 	engine_power f64
 	rotation     f64
+}
+
+struct AiState {
+	initialized bool
+	custom      string
 }
 
 type AIRunner = fn (Uid, Engine, voidptr) ?DroneInputs
