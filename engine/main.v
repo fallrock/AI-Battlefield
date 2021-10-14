@@ -10,6 +10,7 @@ import term
 struct Runner_data {
 	id     engine.Uid
 	engine engine.Engine
+	ai     string
 }
 
 fn main() {
@@ -28,7 +29,12 @@ fn main() {
 	runner.set_args(['API/AI-Runner/runner.js'])
 	runner.run()
 	pass_to_runner := fn (id engine.Uid, e engine.Engine, mut runner os.Process) ?engine.DroneInputs {
-		runner.stdin_write(json.encode(Runner_data{id, e}))
+		runner_data := Runner_data{
+			id: id
+			engine: e
+			ai: os.read_file('cli/example-ai/rpatrol.js') or { panic(err) }
+		}
+		runner.stdin_write(json.encode(runner_data))
 		runner.stdin_write('\n')
 		result := runner.stdout_read()
 		dump(result)

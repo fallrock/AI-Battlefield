@@ -92,8 +92,8 @@ const execute_ai = (context, exported) => {
   return result;
 };
 
-const run = (gamestate, id) => {
-  const ai = compile_ai(find_drone(id, gamestate).ai);
+const run = (gamestate, id, ai_code) => {
+  const ai = compile_ai(ai_code);
   const context = create_context(id, gamestate);
   const exported = export_methods(ai, context);
   const result = execute_ai(context, exported);
@@ -112,7 +112,7 @@ module.exports = { run, dummyAI };
 
     rl.on('line', function(line){
         const data = JSON.parse(line);
-        const result = run(data.engine, data.id);
+        const result = run(data.engine, data.id, data.ai);
         rl.write(JSON.stringify(result));
     })
 })();
