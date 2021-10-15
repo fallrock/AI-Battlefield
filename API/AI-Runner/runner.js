@@ -113,6 +113,7 @@ module.exports = { run, dummyAI };
     rl.on('line', function(line){
         const data = JSON.parse(line);
         const result = run(data.engine, data.id, data.ai);
-        rl.write(JSON.stringify(result));
+        const out = JSON.stringify(result);
+        console.log(out);
     })
 })();

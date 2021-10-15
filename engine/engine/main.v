@@ -5,7 +5,7 @@ import math.complex { Complex }
 import rand
 
 pub struct Engine {
-mut:
+pub mut:
 	drones []Drone
 	bounds Complex = Complex{10, 10}
 pub:
@@ -30,6 +30,7 @@ pub mut:
 }
 
 struct AiState {
+pub mut:
 	initialized bool
 	custom      string
 }

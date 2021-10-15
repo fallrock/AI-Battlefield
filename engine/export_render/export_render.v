@@ -1,18 +1,17 @@
-module engine
+module export_render
 
+import engine
 import x.json2
 import math.complex { Complex }
 
-// export_state_render exports engine state suitable
-// for render clients
-pub fn (e Engine) export_state_render() string {
+pub fn encode(e engine.Engine) string {
 	mut obj := map[string]json2.Any{}
 	obj['type'] = 'gamestate'
 	obj['gamestate'] = engine_to_json(e)
 	return obj.str()
 }
 
-fn engine_to_json(e Engine) json2.Any {
+fn engine_to_json(e engine.Engine) json2.Any {
 	mut obj := map[string]json2.Any{}
 	obj['deltaTime'] = e.delta_time
 	obj['drones'] = e.drones.map(drone_to_json(it))
@@ -23,7 +22,7 @@ fn engine_to_json(e Engine) json2.Any {
 	return obj
 }
 
-fn drone_to_json(d Drone) json2.Any {
+fn drone_to_json(d engine.Drone) json2.Any {
 	mut obj := map[string]json2.Any{}
 	obj['id'] = d.id.str()
 	obj['pos'] = complex_to_json(d.position)
@@ -38,7 +37,7 @@ fn complex_to_json(c Complex) json2.Any {
 	return obj
 }
 
-fn inputs_to_json(i DroneInputs) json2.Any {
+fn inputs_to_json(i engine.DroneInputs) json2.Any {
 	mut obj := map[string]json2.Any{}
 	obj['enginePower'] = i.engine_power
 	obj['rotation'] = i.rotation

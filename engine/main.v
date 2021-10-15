@@ -3,15 +3,10 @@ import streamer
 import rest
 import time
 import os
-import json
 import rand
 import term
-
-struct Runner_data {
-	id     engine.Uid
-	engine engine.Engine
-	ai     string
-}
+import export_render
+import export_ai
 
 fn main() {
 	mut e := engine.Engine{
@@ -29,14 +24,15 @@ fn main() {
 	runner.set_args(['API/AI-Runner/runner.js'])
 	runner.run()
 	pass_to_runner := fn (id engine.Uid, e engine.Engine, mut runner os.Process) ?engine.DroneInputs {
-		runner_data := Runner_data{
+		runner_data := export_ai.encode(
 			id: id
 			engine: e
 			ai: os.read_file('cli/example-ai/rpatrol.js') or { panic(err) }
-		}
-		runner.stdin_write(json.encode(runner_data))
+		)
+		runner.stdin_write(runner_data)
 		runner.stdin_write('\n')
 		result := runner.stdout_read()
+		dump(runner_data)
 		dump(result)
 		if !runner.is_alive() {
 			println(term.header_left('RUNNER STDERR', '-'))
@@ -53,7 +49,7 @@ fn main() {
 	for {
 		println('tick')
 		e.on_tick(pass_to_runner, runner)
-		ws_srv.broadcast(e.export_state_render()) ?
+		ws_srv.broadcast(export_render.encode(e)) ?
 		time.sleep(e.delta_time * time.second)
 	}
 
