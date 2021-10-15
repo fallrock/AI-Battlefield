@@ -35,10 +35,7 @@ pub mut:
 	custom      string
 }
 
-type AIRunner = fn (Uid, Engine, voidptr) ?AiState
-
-pub fn (mut e Engine) on_tick(runner AIRunner, runner_data voidptr) {
-	e.apply_ai(runner, runner_data)
+pub fn (mut e Engine) on_tick() {
 	e.process_world(e.delta_time)
 }
 
@@ -60,11 +57,4 @@ pub fn (mut e Engine) create_drone() Uid {
 	}
 	e.drones << d
 	return d.id
-}
-
-fn (mut e Engine) apply_ai(runner AIRunner, runner_data voidptr) {
-	for mut d in e.drones {
-		new_state := runner(d.id, e, runner_data) or { continue }
-		d.ai_state = new_state
-	}
 }

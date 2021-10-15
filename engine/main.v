@@ -26,16 +26,22 @@ fn main() {
 
 	for {
 		println('tick')
-		e.on_tick(fn (id engine.Uid, e engine.Engine, mut runner runner.Runner) ?engine.AiState {
-			inp := export_ai.encode(
-				id: id
-				engine: e
-				ai: os.read_file('cli/example-ai/rpatrol.js') or { panic(err) }
-			)
-			out := runner.process(inp)
-			return json.decode(engine.AiState, out) or {}
-		}, &runner)
+		apply_ai(mut e, mut runner)
+		e.on_tick()
 		ws_srv.broadcast(export_render.encode(e)) ?
 		time.sleep(e.delta_time * time.second)
+	}
+}
+
+fn apply_ai(mut e engine.Engine, mut runner runner.Runner) {
+	for mut d in e.drones {
+		runner_inp := export_ai.encode(
+			id: d.id
+			engine: e
+			ai: os.read_file('cli/example-ai/rpatrol.js') or { panic(err) }
+		)
+		runner_out := runner.process(runner_inp)
+
+		d.ai_state = json.decode(engine.AiState, runner_out) or { continue }
 	}
 }
