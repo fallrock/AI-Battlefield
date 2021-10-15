@@ -38,8 +38,7 @@ fn (h Handler) handle(req Request) Response {
 			}
 			println('Creating drone')
 		}
-		// TODO change to PUT https://stackoverflow.com/a/54865375
-		.patch {
+		.put {
 			id := get_id(req.url) or { return err_resp() }
 			ai := req.data
 			println('Creating ai for drone ($id) ($ai)')
