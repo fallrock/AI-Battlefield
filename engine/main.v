@@ -1,12 +1,9 @@
 import engine
 import streamer
 import rest
+import runner
 import time
-import os
-import json
-import term
 import export_render
-import export_ai
 
 fn main() {
 	mut e := engine.Engine{
@@ -19,38 +16,17 @@ fn main() {
 	mut ws_srv := streamer.new_server(8081) ?
 	go ws_srv.listen()
 
-	mut runner := os.new_process('/usr/bin/node')
-	runner.set_redirect_stdio()
-	runner.set_args(['API/AI-Runner/runner.js'])
-	runner.run()
-	pass_to_runner := fn (id engine.Uid, e engine.Engine, mut runner os.Process) ?engine.AiState {
-		runner_data := export_ai.encode(
-			id: id
-			engine: e
-			ai: os.read_file('cli/example-ai/rpatrol.js') or { panic(err) }
-		)
-		runner.stdin_write(runner_data)
-		runner.stdin_write('\n')
-		result := runner.stdout_read()
-		dump(runner_data)
-		dump(result)
-		if !runner.is_alive() {
-			println(term.header_left('RUNNER STDERR', '-'))
-			println(term.red(runner.stderr_read()))
-			println(term.h_divider('-'))
-			panic('runner died')
-		}
-		return json.decode(engine.AiState, result)
-	}
+	mut runner := runner.new_runner()
+	runner.start()
 
 	e.create_drone()
 
 	for {
 		println('tick')
-		e.on_tick(pass_to_runner, runner)
+		e.on_tick(fn (id engine.Uid, e engine.Engine, mut runner &runner.Runner) ?engine.AiState {
+			return runner.exec(id, e)
+		}, &runner)
 		ws_srv.broadcast(export_render.encode(e)) ?
 		time.sleep(e.delta_time * time.second)
 	}
-
-	runner.close()
 }
