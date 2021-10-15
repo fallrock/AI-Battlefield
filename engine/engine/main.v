@@ -19,23 +19,23 @@ pub:
 	id Uid
 pub mut:
 	position Complex
-	inputs   DroneInputs
 	ai_state AiState
 }
 
 pub struct DroneInputs {
 pub mut:
-	engine_power f64
+	engine_power f64 [json: enginePower]
 	rotation     f64
 }
 
-struct AiState {
+pub struct AiState {
 pub mut:
 	initialized bool
+	input       DroneInputs
 	custom      string
 }
 
-type AIRunner = fn (Uid, Engine, voidptr) ?DroneInputs
+type AIRunner = fn (Uid, Engine, voidptr) ?AiState
 
 pub fn (mut e Engine) on_tick(runner AIRunner, runner_data voidptr) {
 	e.apply_ai(runner, runner_data)
@@ -57,15 +57,14 @@ pub fn (mut e Engine) create_drone() Uid {
 	d := Drone{
 		id: rand.ulid()
 		position: Complex{2, 2}
-		inputs: DroneInputs{}
 	}
 	e.drones << d
 	return d.id
 }
 
-fn (e Engine) apply_ai(runner AIRunner, runner_data voidptr) {
+fn (mut e Engine) apply_ai(runner AIRunner, runner_data voidptr) {
 	for mut d in e.drones {
-		inp := runner(d.id, e, runner_data) or { continue }
-		d.inputs = inp
+		new_state := runner(d.id, e, runner_data) or { continue }
+		d.ai_state = new_state
 	}
 }

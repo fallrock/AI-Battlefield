@@ -5,9 +5,9 @@ import math.complex { Complex }
 
 fn (e Engine) process_world(delta_time f64) {
 	for mut d in e.drones {
-		rad := math.radians(d.inputs.rotation)
+		rad := math.radians(d.ai_state.input.rotation)
 		rot := Complex{math.cos(rad), math.sin(rad)}
-		move := Complex{d.inputs.engine_power, 0} * rot
+		move := Complex{d.ai_state.input.engine_power, 0} * rot
 		d.position += move * Complex{delta_time, 0}
 		d.position = e.clamp_pos(d.position)
 	}

@@ -26,7 +26,7 @@ fn drone_to_json(d engine.Drone) json2.Any {
 	mut obj := map[string]json2.Any{}
 	obj['id'] = d.id.str()
 	obj['pos'] = complex_to_json(d.position)
-	obj['input'] = inputs_to_json(d.inputs)
+	obj['input'] = inputs_to_json(d.ai_state.input)
 	return obj
 }
 

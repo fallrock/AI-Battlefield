@@ -3,7 +3,7 @@ import streamer
 import rest
 import time
 import os
-import rand
+import json
 import term
 import export_render
 import export_ai
@@ -23,7 +23,7 @@ fn main() {
 	runner.set_redirect_stdio()
 	runner.set_args(['API/AI-Runner/runner.js'])
 	runner.run()
-	pass_to_runner := fn (id engine.Uid, e engine.Engine, mut runner os.Process) ?engine.DroneInputs {
+	pass_to_runner := fn (id engine.Uid, e engine.Engine, mut runner os.Process) ?engine.AiState {
 		runner_data := export_ai.encode(
 			id: id
 			engine: e
@@ -40,8 +40,7 @@ fn main() {
 			println(term.h_divider('-'))
 			panic('runner died')
 		}
-		// return json.decode(engine.DroneInputs, result)
-		return engine.DroneInputs{}
+		return json.decode(engine.AiState, result)
 	}
 
 	e.create_drone()
@@ -54,11 +53,4 @@ fn main() {
 	}
 
 	runner.close()
-}
-
-fn somehow_exec_ai(id engine.Uid, e engine.Engine, _ voidptr) ?engine.DroneInputs {
-	return engine.DroneInputs{
-		engine_power: 1
-		rotation: rand.f64n(360.0)
-	}
 }
