@@ -10,11 +10,10 @@ import export_render
 import sqlite
 
 struct AiRecord {
-	id  int    [primary; sql: serial]
-	uid string [unique]
-	code  string
+	id   int    [primary; sql: serial]
+	uid  string [unique]
+	code string
 }
-
 
 fn main() {
 	mut e := engine.Engine{
