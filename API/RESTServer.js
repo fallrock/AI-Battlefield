@@ -10,7 +10,7 @@ class RESTServer {
     const express = require('express');
     this.app = express();
 
-    this.app.use(express.json());
+    this.app.use(express.json({limit: '1mb'}));
 
     const logger = (req, res, next) => {
       // console.log(req);
