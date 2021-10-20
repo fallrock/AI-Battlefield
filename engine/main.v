@@ -15,15 +15,36 @@ struct AiRecord {
 	code string
 }
 
-fn main() {
-	mut e := engine.Engine{
-		delta_time: 1.0 / 10
-	}
+struct AppState {
+mut:
+	e     engine.Engine
+	ai_db sqlite.DB
+}
 
-	ai_db := sqlite.connect(':memory:') ?
-	sql ai_db {
+fn example_init(mut app AppState) {
+	sql app.ai_db {
 		create table AiRecord
 	}
+
+	uid := app.e.create_drone()
+	test_ai := AiRecord{
+		uid: uid.str()
+		code: os.read_file('cli/example-ai/rpatrol.js') or { panic(err) }
+	}
+	sql app.ai_db {
+		insert test_ai into AiRecord
+	}
+}
+
+fn main() {
+	mut app := AppState{
+		e: engine.Engine{
+			delta_time: 1.0 / 10
+		}
+		ai_db: sqlite.connect(':memory:') ?
+	}
+
+	example_init(mut app)
 
 	mut rest_srv := rest.new_server(8082)
 	go rest_srv.listen_and_serve()
@@ -34,21 +55,12 @@ fn main() {
 	mut runner := runner.new_runner(['/usr/bin/node', 'API/AI-Runner/runner.js'])
 	runner.start()
 
-	uid := e.create_drone()
-	test_ai := AiRecord{
-		uid: uid.str()
-		code: os.read_file('cli/example-ai/rpatrol.js') or { panic(err) }
-	}
-	sql ai_db {
-		insert test_ai into AiRecord
-	}
-
 	for {
 		println('tick')
-		apply_ai(mut e, mut runner, ai_db)
-		e.on_tick()
-		ws_srv.broadcast(export_render.encode(e)) ?
-		time.sleep(e.delta_time * time.second)
+		apply_ai(mut app.e, mut runner, app.ai_db)
+		app.e.on_tick()
+		ws_srv.broadcast(export_render.encode(app.e)) ?
+		time.sleep(app.e.delta_time * time.second)
 	}
 }
 
