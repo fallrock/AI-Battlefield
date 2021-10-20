@@ -29,10 +29,18 @@ fn main() {
 	app.start()
 
 	for {
+		tick_start := time.now()
+
 		app.apply_ai()
 		app.e.on_tick()
 		ws_srv.broadcast(export_render.encode(app.e)) ?
-		time.sleep(app.e.delta_time * time.second)
+
+		elapsed := time.now() - tick_start
+		dt := time.Duration(i64(app.e.delta_time * time.second))
+		time.sleep(dt - elapsed)
+		if elapsed > dt {
+			eprintln("Can't keep up! Frame time: $elapsed.milliseconds() / $dt.milliseconds() ms")
+		}
 	}
 
 	app.stop()
