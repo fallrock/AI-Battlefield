@@ -25,7 +25,7 @@ fn main() {
 	mut ws_srv := streamer.new_server(8081) ?
 	go ws_srv.listen()
 
-	mut runner := runner.new_runner(['/usr/bin/node', 'API/AI-Runner/runner.js'])
+	mut runner := runner.new_runner('/usr/bin/node', ['./runner/runner.js'])
 	runner.start()
 
 	for {

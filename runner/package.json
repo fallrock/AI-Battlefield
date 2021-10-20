@@ -1,0 +1,19 @@
+{
+  "name": "API",
+  "version": "1.0.0",
+  "description": "sponsored by gym1505",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fallrock/AI-Battlefield.git"
+  },
+  "author": "",
+  "license": "",
+  "bugs": {
+    "url": "https://github.com/fallrock/AI-Battlefield/issues"
+  },
+  "homepage": "https://github.com/fallrock/AI-Battlefield#readme",
+  "dependencies": {
+    "just-clone": "^3.2.1"
+  }
+}
