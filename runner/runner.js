@@ -110,10 +110,35 @@ module.exports = { run, dummyAI };
         terminal: false
     });
 
+    let cache = {
+        ai_codes: {},
+        gamestate: {},
+    }
+
     rl.on('line', function(line){
-        const data = JSON.parse(line);
-        const result = run(data.engine, data.id, data.ai);
-        const out = JSON.stringify(result);
-        console.log(out);
+        const packet = JSON.parse(line);
+        switch (packet.type) {
+            case 'ai': {
+                cache.ai_codes[packet.data.id] = packet.data.code;
+                console.log('0');
+                break;
+            }
+            case 'engine': {
+                let out = [];
+                cache.gamestate = packet.data.engine;
+                for (const drone of cache.gamestate.drones) {
+                    const result = run(cache.gamestate, drone.id, cache.ai_codes[drone.id]);
+                    out.push({
+                        id: drone.id,
+                        ai_state: result,
+                    });
+                }
+                console.log(JSON.stringify(out));
+                break;
+            }
+            default: {
+                throw `Unknown packet type: ${packet.type}`;
+            }
+        }
     })
 })();

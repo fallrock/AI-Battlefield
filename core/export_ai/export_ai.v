@@ -4,20 +4,12 @@ import engine
 import x.json2
 import math.complex { Complex }
 
-pub struct RunnerData {
-	id     engine.Uid
-	engine engine.Engine
-	ai     string
-}
-
 // export_state_ai exports engine state suitable
 // for ai scripts
-pub fn encode(data RunnerData) string {
+pub fn encode(e engine.Engine) json2.Any {
 	mut obj := map[string]json2.Any{}
-	obj['id'] = data.id.str()
-	obj['engine'] = engine_to_json(data.engine)
-	obj['ai'] = data.ai
-	return obj.str()
+	obj['engine'] = engine_to_json(e)
+	return obj
 }
 
 fn engine_to_json(e engine.Engine) json2.Any {
