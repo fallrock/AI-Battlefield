@@ -53,7 +53,7 @@ pub fn (mut e Engine) import_state(data string) ? {
 pub fn (mut e Engine) create_drone() Uid {
 	d := Drone{
 		id: rand.ulid()
-		position: Complex{2, 2}
+		position: e.bounds * Complex{rand.f64(), 0}
 	}
 	e.drones << d
 	return d.id
