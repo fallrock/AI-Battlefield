@@ -36,6 +36,34 @@ fn example_init(mut app AppState) {
 	}
 }
 
+fn (mut app AppState) on_create_drone() string {
+	println('Creating drone')
+	return app.e.create_drone()
+}
+
+fn (mut app AppState) on_delete_drone() {
+	panic('Not implemented')
+}
+
+fn (mut app AppState) on_set_ai(uid string, code string) {
+	println('Creating ai for drone $uid')
+	ai := AiRecord{
+		uid: uid
+		code: code
+	}
+	sql app.ai_db {
+		insert ai into AiRecord
+	}
+}
+
+fn (app AppState) on_get_ai(uid string) string {
+	println('Sending ai for ($uid)')
+	ai_rec := sql app.ai_db {
+		select from AiRecord where uid == uid limit 1
+	}
+	return ai_rec.code
+}
+
 fn main() {
 	mut app := AppState{
 		e: engine.Engine{
@@ -46,7 +74,7 @@ fn main() {
 
 	example_init(mut app)
 
-	mut rest_srv := rest.new_server(8082)
+	mut rest_srv := rest.new_server(rest.Handler{&app}, 8082)
 	go rest_srv.listen_and_serve()
 
 	mut ws_srv := streamer.new_server(8081) ?
@@ -56,7 +84,7 @@ fn main() {
 	runner.start()
 
 	for {
-		println('tick')
+		// println('tick')
 		apply_ai(mut app.e, mut runner, app.ai_db)
 		app.e.on_tick()
 		ws_srv.broadcast(export_render.encode(app.e)) ?
@@ -69,6 +97,9 @@ fn apply_ai(mut e engine.Engine, mut runner runner.Runner, ai_db sqlite.DB) {
 		uid := d.id.str()
 		ai_rec := sql ai_db {
 			select from AiRecord where uid == uid limit 1
+		}
+		if ai_rec.id == 0 {
+			continue
 		}
 		runner_inp := export_ai.encode(
 			id: d.id
