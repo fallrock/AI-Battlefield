@@ -65,6 +65,9 @@ fn (app AppState) on_get_ai(uid string) string {
 }
 
 fn main() {
+	if 'PROJECT_ROOT' in os.environ() {
+		os.chdir(os.environ()['PROJECT_ROOT']) or { panic(err) }
+	}
 	mut app := AppState{
 		e: engine.Engine{
 			delta_time: 1.0 / 10
