@@ -3,7 +3,7 @@ module engine
 import math
 import math.complex { Complex }
 
-fn (e Engine) process_world(delta_time f64) {
+fn (mut e Engine) process_world(delta_time f64) {
 	for mut d in e.drones {
 		rad := math.radians(d.ai_state.input.rotation)
 		rot := Complex{math.cos(rad), math.sin(rad)}
