@@ -127,7 +127,9 @@ module.exports = { run, dummyAI };
                 let out = [];
                 cache.gamestate = packet.data.engine;
                 for (const drone of cache.gamestate.drones) {
-                    const result = run(cache.gamestate, drone.id, cache.ai_codes[drone.id]);
+                    const ai_code = cache.ai_codes[drone.id];
+                    if (!ai_code) { continue; }
+                    const result = run(cache.gamestate, drone.id, ai_code);
                     out.push({
                         id: drone.id,
                         ai_state: result,
