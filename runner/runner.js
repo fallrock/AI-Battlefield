@@ -92,8 +92,8 @@ const execute_ai = (context, exported) => {
   return result;
 };
 
-const run = (gamestate, id) => {
-  const ai = compile_ai(find_drone(id, gamestate).ai);
+const run = (gamestate, id, ai_code) => {
+  const ai = compile_ai(ai_code);
   const context = create_context(id, gamestate);
   const exported = export_methods(ai, context);
   const result = execute_ai(context, exported);
@@ -101,3 +101,46 @@ const run = (gamestate, id) => {
 };
 
 module.exports = { run, dummyAI };
+
+(function main() {
+    const readline = require('readline');
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+        terminal: false
+    });
+
+    let cache = {
+        ai_codes: {},
+        gamestate: {},
+    }
+
+    rl.on('line', function(line){
+        const packet = JSON.parse(line);
+        switch (packet.type) {
+            case 'ai': {
+                cache.ai_codes[packet.data.id] = packet.data.code;
+                console.log('0');
+                break;
+            }
+            case 'engine': {
+                let out = [];
+                cache.gamestate = packet.data.engine;
+                for (const drone of cache.gamestate.drones) {
+                    const ai_code = cache.ai_codes[drone.id];
+                    if (!ai_code) { continue; }
+                    const result = run(cache.gamestate, drone.id, ai_code);
+                    out.push({
+                        id: drone.id,
+                        ai_state: result,
+                    });
+                }
+                console.log(JSON.stringify(out));
+                break;
+            }
+            default: {
+                throw `Unknown packet type: ${packet.type}`;
+            }
+        }
+    })
+})();
