@@ -19,7 +19,7 @@ class RESTServer {
     this.app.use(express.json({limit: '1mb'}));
 
     const logger_temp = (req, res, next) => {
-      this.logger.info(req);
+      // this.logger.info(req);
       next();
     };
     this.app.use(logger_temp);
