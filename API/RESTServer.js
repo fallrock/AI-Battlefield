@@ -3,20 +3,26 @@
 class RESTServer {
   app = null;
   engine = null;
+  logger = null;
 
   constructor(engineRef) {
     this.engine = engineRef;
+    const logfile = Math.round(+new Date()/1000);
+    if (!require('fs').existsSync('./log/')) {
+      require('fs').mkdirSync('./log/');
+    }
+    this.logger = require('logger').createLogger(`./log/${logfile}.log`);
 
     const express = require('express');
     this.app = express();
 
     this.app.use(express.json({limit: '1mb'}));
 
-    const logger = (req, res, next) => {
-      // console.log(req);
+    const logger_temp = (req, res, next) => {
+      this.logger.info(req);
       next();
     };
-    this.app.use(logger);
+    this.app.use(logger_temp);
 
     ///TODO: validate tokens and stuff
 
@@ -24,7 +30,7 @@ class RESTServer {
     this.app.post('/drone', (req, res) => {
       const id = this.engine.createDrone();
       const token = 'GENERATED SECRET TOKEN';
-      console.log(`drone ${id} has been created`);
+      this.logger.info(`drone ${id} has been created`);
       res.status(201).send({ id, token });
     });
 
@@ -36,7 +42,7 @@ class RESTServer {
       ///TODO: check token
       ///TODO: validate ai
       this.engine.setDroneAI(id, ai);
-      console.log(`drone ${id} uploaded ai code`);
+      this.logger.info(`drone ${id} uploaded ai code`);
       res.status(200).send({});
     });
 
@@ -45,7 +51,7 @@ class RESTServer {
       const id = req.body.id;
       const token = req.body.token;
       const ai = this.engine.exportDroneAI(id);
-      console.log(`drone ${id} requested ai code`);
+      this.logger.info(`drone ${id} requested ai code`);
       res.status(200).send({ id, ai });
     });
   }
