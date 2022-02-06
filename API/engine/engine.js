@@ -6,6 +6,7 @@ const airunner = require('../AI-Runner/runner.js');
 let gameState = {
     deltaTime: 1/4,
     drones: [],
+    coins: [],
     map: {
         w: 10,
         h: 10,
@@ -60,6 +61,7 @@ module.exports.createDrone = function() {
         custom: {},
     };
     drone.ai = airunner.dummyAI;
+    drone.score = 0;
     gameState.drones.push(drone);
     return drone.id;
 }
@@ -85,7 +87,22 @@ function _applyAI() {
     }
 }
 
+function _spawnCoin() {
+    let coin = {};
+    coin.pos = gen.coinPoint(gameState);
+    coin.radius = 0.25;
+    gameState.coins.push(coin);
+}
+
+function _checkCollision(pointA, radiusA, pointB, radiusB) {
+    const dx = pointA.x - pointB.x;
+    const dy = pointA.y - pointB.y;
+    const distance = Math.sqrt(dx*dx + dy*dy);
+    return distance <= radiusA + radiusB;
+}
+
 function _processWorld() {
+    // process drones
     for (let drone of gameState.drones) {
         const radians = drone.input.rotation * Math.PI / 180;
         const fwd = [
@@ -99,5 +116,23 @@ function _processWorld() {
         if (drone.pos.y < 0) { drone.pos.y = 0; }
         if (drone.pos.x >= gameState.map.w) { drone.pos.x = gameState.map.w; }
         if (drone.pos.y >= gameState.map.h) { drone.pos.y = gameState.map.h; }
+    }
+
+    // spawn coins
+    if (gameState.coins.length < gameState.drones.length) {
+        _spawnCoin();
+    }
+
+    // process coins collisions
+    for (let drone of gameState.drones) {
+        for (let i = gameState.coins.length - 1; i >= 0; --i) {
+            let coin = gameState.coins[i];
+            // check collision
+            if (_checkCollision(drone.pos, 0.1, coin.pos, coin.radius)) {
+                drone.score = drone.score + 1;
+                // console.log(drone.score);
+                gameState.coins.splice(i, 1);
+            }
+        }
     }
 }

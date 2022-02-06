@@ -81,6 +81,30 @@ class View {
                 )));
                 const ti = f => p.lerp(f(this.#ticks.first.gamestate), f(this.#ticks.last.gamestate), tick_t);
 
+                // draw coins
+                this.#ticks.first.gamestate.coins.forEach((_, coin_i) => {
+                    const coin = this.#ticks.first.gamestate.coins[coin_i];
+                    const pos = new Vec2(coin.pos.x, coin.pos.y);
+                    const radius = coin.radius;
+
+                    const map = new Vec2(ti(e => e.map.w), ti(e => e.map.h));
+                    const screen = new Vec2(p.width, p.height);
+
+                    const m2s = mk_m2s(pos, new Vec2(0, 1), map, screen);
+
+                    const c = p.color(235, 213, 52);
+                    p.stroke(c);
+                    p.strokeWeight(1);
+
+                    p.beginShape();
+                    p.vertex(...m2s(new Vec2(0.0, -radius  ) ).array);
+                    p.vertex(...m2s(new Vec2(-radius, 0  ) ).array);
+                    p.vertex(...m2s(new Vec2(0.0, radius  ) ).array);
+                    p.vertex(...m2s(new Vec2(radius, 0 ) ).array);
+                    p.endShape(p.CLOSE);
+
+                });
+                // draw drones
                 this.#ticks.first.gamestate.drones.forEach((_, drone_i) => {
                     const d1 = this.#ticks.first.gamestate.drones[drone_i];
                     const d2 = this.#ticks.last.gamestate.drones[drone_i];
