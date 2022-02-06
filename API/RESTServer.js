@@ -54,6 +54,15 @@ class RESTServer {
       this.logger.info(`drone ${id} requested ai code`);
       res.status(200).send({ id, ai });
     });
+
+    // get current drone state
+    this.app.get('/drone_state', (req, res) => {
+      const id = req.body.id;
+      const token = req.body.token;
+      const state = this.engine.exportDroneState(id);
+      this.logger.info(`drone ${id} requested drone state`);
+      res.status(200).send({ id, state });
+    });
   }
 
   listen(config) {

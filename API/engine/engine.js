@@ -48,6 +48,14 @@ module.exports.exportDroneAI = function(playerId) {
     }
 }
 
+module.exports.exportDroneState = function(playerId) {
+    for (let drone of gameState.drones) {
+        if (drone.id == playerId) {
+            return JSON.stringify(drone);
+        }
+    }
+}
+
 module.exports.createDrone = function() {
     let drone = {};
     drone.pos = gen.spawnPoint(gameState);

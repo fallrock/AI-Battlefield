@@ -9,6 +9,12 @@ pub:
 	token string
 }
 
+
+struct StatePacket {
+pub:
+	state string [required]
+}
+
 struct AiPacket {
 pub:
 	id    string [required]
@@ -36,6 +42,11 @@ pub fn set_ai(u User, ai string) ? {
 pub fn get_ai(u User) ?AiPacket {
 	s := get_json(aibf.url, json.encode(u)) ?.text
 	return json.decode(AiPacket, s) or {}
+}
+
+pub fn get_drone_state(u User) ?StatePacket {
+	s := get_json(aibf.url+'_state', json.encode(u)) ?.text
+	return json.decode(StatePacket, s) or {}
 }
 
 // get_json sends a GET HTTP request to the URL with a JSON data
