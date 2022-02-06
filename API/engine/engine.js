@@ -128,7 +128,7 @@ function _processWorld() {
         for (let i = gameState.coins.length - 1; i >= 0; --i) {
             let coin = gameState.coins[i];
             // check collision
-            if (_checkCollision(drone.pos, 0.1, coin.pos, coin.radius)) {
+            if (_checkCollision(drone.pos, 0, coin.pos, coin.radius)) {
                 drone.score = drone.score + 1;
                 // console.log(drone.score);
                 gameState.coins.splice(i, 1);

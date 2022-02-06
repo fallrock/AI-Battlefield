@@ -90,17 +90,17 @@ class View {
                     const map = new Vec2(ti(e => e.map.w), ti(e => e.map.h));
                     const screen = new Vec2(p.width, p.height);
 
-                    const m2s = mk_m2s(pos, new Vec2(0, 1), map, screen);
+                    const m2s = mk_m2s(pos, new Vec2(-1.0, 0.0), map, screen);
 
                     const c = p.color(235, 213, 52);
                     p.stroke(c);
                     p.strokeWeight(1);
 
                     p.beginShape();
-                    p.vertex(...m2s(new Vec2(0.0, -radius  ) ).array);
-                    p.vertex(...m2s(new Vec2(-radius, 0  ) ).array);
-                    p.vertex(...m2s(new Vec2(0.0, radius  ) ).array);
-                    p.vertex(...m2s(new Vec2(radius, 0 ) ).array);
+                    p.vertex(...m2s(new Vec2(0      , 0      ) ).array);
+                    p.vertex(...m2s(new Vec2(+radius, 0      ) ).array);
+                    p.vertex(...m2s(new Vec2(+radius, +radius) ).array);
+                    p.vertex(...m2s(new Vec2(0      , +radius) ).array);
                     p.endShape(p.CLOSE);
 
                 });
