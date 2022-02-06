@@ -33,6 +33,23 @@ const filter_gameview = (id, gamestate) => {
     return d1 - d2;
   });
 
+  game.coins.sort((a, b) => {
+    const dist = (first, second) => {
+      const delta = (a, b) => {return {
+        x: a.x - b.x,
+        y: a.y - b.y,
+      }};
+      const mag = (a) => Math.sqrt(a.x * a.x + a.y * a.y);
+
+      return mag(delta(first, second));
+    };
+
+    const d1 = dist(player.pos, a.pos);
+    const d2 = dist(player.pos, b.pos);
+
+    return d1 - d2;
+  });
+
   const gameview = {
     game: game,
     drone: player,
