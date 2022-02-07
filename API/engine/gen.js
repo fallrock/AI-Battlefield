@@ -2,7 +2,11 @@ module.exports = {
 
     id: function() {
         ///TODO: proper id generation
-        return (''+Math.random()).slice(2) + (''+Math.random()).slice(2);
+        const characterSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let result = '';
+        for (let i = 0; i < 16; ++i)
+            result += characterSet.charAt(Math.floor(Math.random()*characterSet.length));
+        return result;
     },
 
     coinPoint: function(gameState) {
