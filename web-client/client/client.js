@@ -66,6 +66,29 @@ class View {
             };
 
             p.draw = () => {
+                // scoreboard
+                const set_scoreboard = (players) => {
+                    const scoreboard = document.getElementById('scoreboard');
+                    scoreboard.innerHTML = '';
+                    scoreboard.appendChild(document.createElement('p')).innerHTML = 'Scoreboard';
+                    for (let i = 0; i < players.length; ++i) {
+                        const player = players[i];
+
+                        const line = document.createElement('p');
+                        line.innerHTML = `${player.id} : ${player.score}`;
+
+                        scoreboard.appendChild(line);
+                    }
+                };
+                const scoreboard_list =
+                      this.#ticks.last.gamestate.drones
+                                 .map(e => e)
+                                 .sort(function(a, b) {
+                                     return b.score - a.score;
+                                 })
+                                 .map(e => {return { score: e.score, id: e.id }});
+                set_scoreboard(scoreboard_list);
+
                 p.background(0);
 
                 const inv_lerp = (a, b, v) => (v - a) / (b - a);
