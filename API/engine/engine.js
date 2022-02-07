@@ -75,6 +75,15 @@ module.exports.createDrone = function() {
     return {id: drone.id, token: drone.token};
 }
 
+module.exports.validateToken = function(id, token) {
+    for (let drone of gameState.drones) {
+        if (drone.id === id) {
+            if (drone.token === token) return true;
+            return false;
+        }
+    }
+}
+
 function _applyAI() {
     for (let drone of gameState.drones) {
         ///TODO: try/catch, proper input validation

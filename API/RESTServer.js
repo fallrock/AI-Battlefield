@@ -25,8 +25,6 @@ class RESTServer {
     };
     this.app.use(logger_temp);
 
-    ///TODO: validate tokens and stuff
-
     // create drone
     this.app.post('/drone', (req, res) => {
       const {id, token} = this.engine.createDrone();
@@ -39,7 +37,13 @@ class RESTServer {
       const id = req.body.id;
       const token = req.body.token;
       const ai = req.body.ai;
-      ///TODO: check token
+
+      if (!this.engine.validateToken(id, token)) {
+        this.logger.info(`drone ${id} wrong token ${token}`);
+        res.status(401).send({});
+        return;
+      }
+
       ///TODO: validate ai
       this.engine.setDroneAI(id, ai);
       this.logger.info(`drone ${id} uploaded ai code`);
@@ -51,6 +55,13 @@ class RESTServer {
       const id = req.body.id;
       const token = req.body.token;
       const ai = this.engine.exportDroneAI(id);
+
+      if (!this.engine.validateToken(id, token)) {
+        this.logger.info(`drone ${id} wrong token ${token}`);
+        res.status(401).send({});
+        return;
+      }
+
       this.logger.info(`drone ${id} requested ai code`);
       res.status(200).send({ id, ai });
     });
@@ -60,6 +71,13 @@ class RESTServer {
       const id = req.body.id;
       const token = req.body.token;
       const state = this.engine.exportDroneState(id);
+
+      if (!this.engine.validateToken(id, token)) {
+        this.logger.info(`drone ${id} wrong token ${token}`);
+        res.status(401).send({});
+        return;
+      }
+
       this.logger.info(`drone ${id} requested drone state`);
       res.status(200).send({ id, state });
     });
