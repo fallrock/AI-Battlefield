@@ -9,5 +9,5 @@ fn load(path string) ?aibf.User {
 
 for f in os.walk_ext('cli/example-ai/', 'js') {
 	u := load(f) ?
-	println('${os.base(f)}: $u.id')
+	println('${os.base(f)}:\t\t$u.id\t$u.token')
 }
