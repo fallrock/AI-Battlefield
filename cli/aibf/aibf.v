@@ -36,17 +36,28 @@ pub fn set_ai(u User, ai string) ? {
 		token: u.token
 		ai: ai
 	}
-	put_json(aibf.url, json.encode(packet)) ?
+	response := put_json(aibf.url, json.encode(packet)) ?
+	if response.status_code == 401 {
+		 panic('auth failure')
+	}
 }
 
 pub fn get_ai(u User) ?AiPacket {
-	s := get_json(aibf.url, json.encode(u)) ?.text
-	return json.decode(AiPacket, s) or {}
+	response := get_json(aibf.url, json.encode(u)) ?
+	if response.status_code == 401 {
+		 panic('auth failure')
+	}
+	s := response.text
+	return json.decode(AiPacket, s) or { panic('something went wrong') }
 }
 
 pub fn get_drone_state(u User) ?StatePacket {
-	s := get_json(aibf.url+'_state', json.encode(u)) ?.text
-	return json.decode(StatePacket, s) or {}
+	response := get_json(aibf.url+'_state', json.encode(u)) ?
+	if response.status_code == 401 {
+		 panic('auth failure')
+	}
+	s := response.text
+	return json.decode(StatePacket, s) or { panic('something went wrong') }
 }
 
 // get_json sends a GET HTTP request to the URL with a JSON data
