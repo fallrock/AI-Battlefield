@@ -1,5 +1,6 @@
 'use strict';
 
+
 class RESTServer {
   app = null;
   engine = null;
@@ -28,9 +29,8 @@ class RESTServer {
 
     // create drone
     this.app.post('/drone', (req, res) => {
-      const id = this.engine.createDrone();
-      const token = 'GENERATED SECRET TOKEN';
-      this.logger.info(`drone ${id} has been created`);
+      const {id, token} = this.engine.createDrone();
+      this.logger.info(`drone ${id} has been created with token ${token}`);
       res.status(201).send({ id, token });
     });
 

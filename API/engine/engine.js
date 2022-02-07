@@ -60,6 +60,7 @@ module.exports.createDrone = function() {
     let drone = {};
     drone.pos = gen.spawnPoint(gameState);
     drone.id = gen.id();
+    drone.token = gen.token();
     drone.input = {
         enginePower: 0,
         rotation: 0,
@@ -71,7 +72,7 @@ module.exports.createDrone = function() {
     drone.ai = airunner.dummyAI;
     drone.score = 0;
     gameState.drones.push(drone);
-    return drone.id;
+    return {id: drone.id, token: drone.token};
 }
 
 function _applyAI() {
